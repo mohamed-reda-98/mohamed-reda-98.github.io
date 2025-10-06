@@ -18,6 +18,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        body.port-closed {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
         main {
@@ -184,6 +189,27 @@
             border-radius: 15px;
             margin: 20px 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: background 0.5s ease;
+        }
+
+        .clock-display.port-closed {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .port-status {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .clock-label {
@@ -265,6 +291,10 @@
                 font-size: 1.2em;
             }
 
+            .port-status {
+                font-size: 1.4em;
+            }
+
             .period-selector {
                 flex-direction: column;
             }
@@ -313,7 +343,8 @@
 
             <!-- Clock Section -->
             <div class="clock-section" id="clockSection">
-                <div class="clock-display">
+                <div class="clock-display" id="clockDisplay">
+                    <div class="port-status" id="portStatus">الميناء مفتوح</div>
                     <div class="clock-label">Current In-Game Time</div>
                     <div class="clock-time" id="gameTime">00:00:00</div>
                     <div class="clock-period" id="gamePeriod">AM</div>
@@ -380,8 +411,29 @@
 
             return {
                 time: `${String(hours12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
-                period: period
+                period: period,
+                hours24: hours24
             };
+        }
+
+        function updatePortStatus(hours24) {
+            const clockDisplay = document.getElementById('clockDisplay');
+            const portStatus = document.getElementById('portStatus');
+            const body = document.body;
+
+            // Port is closed from 7 PM (19:00) to 7 AM (07:00)
+            // Port is open from 7 AM (07:00) to 7 PM (19:00)
+            if (hours24 >= 19 || hours24 < 7) {
+                // Port closed (7 PM to 7 AM)
+                clockDisplay.classList.add('port-closed');
+                body.classList.add('port-closed');
+                portStatus.textContent = '🔴 الميناء مغلق';
+            } else {
+                // Port open (7 AM to 7 PM)
+                clockDisplay.classList.remove('port-closed');
+                body.classList.remove('port-closed');
+                portStatus.textContent = '🟢 الميناء مفتوح';
+            }
         }
 
         function formatRealTime(date) {
@@ -433,7 +485,8 @@
                     <strong>⚡ Speed:</strong> 1 real minute = ${conversionRatio.toFixed(4)} game minutes<br>
                     <strong>🔄 Ratio:</strong> 1 real hour = ${conversionRatio.toFixed(2)} game hours<br>
                     <strong>⏱️ Duration:</strong> 1 game hour = ${realMinPerGameHour.toFixed(2)} real minutes<br>
-                    <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours
+                    <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours<br>
+                    <strong>🚢 Port Hours:</strong> Open 7 AM - 7 PM, Closed 7 PM - 7 AM
                 `;
 
                 // Switch to clock view
@@ -469,6 +522,9 @@
             const formattedTime = formatGameTime(currentGameMinutes);
             document.getElementById('gameTime').textContent = formattedTime.time;
             document.getElementById('gamePeriod').textContent = formattedTime.period;
+
+            // Update port status based on time
+            updatePortStatus(formattedTime.hours24);
         }
 
         function updateRealTime() {
@@ -486,6 +542,9 @@
 
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('clockSection').classList.remove('active');
+
+            // Reset background
+            document.body.classList.remove('port-closed');
         }
 
         // Auto-restart on page visibility change to maintain accuracy
