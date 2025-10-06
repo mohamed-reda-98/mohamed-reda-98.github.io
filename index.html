@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mohamed Reda -Blaind Clock</title>
+    <title>Mohamed Reda - Blaine Clock</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <style>
         * {
@@ -154,6 +154,14 @@
             margin: 20px 0;
         }
 
+        .clock-period {
+            font-size: 1.5em;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-top: 10px;
+            letter-spacing: 3px;
+        }
+
         .real-time-panel {
             background: #f5f5f5;
             padding: 20px;
@@ -204,6 +212,10 @@
             .clock-time {
                 font-size: 3em;
             }
+
+            .clock-period {
+                font-size: 1.2em;
+            }
         }
     </style>
   </head>
@@ -234,6 +246,7 @@
                 <div class="clock-display">
                     <div class="clock-label">Current In-Game Time</div>
                     <div class="clock-time" id="gameTime">00:00:00</div>
+                    <div class="clock-period" id="gamePeriod">AM</div>
                 </div>
 
                 <div class="real-time-panel">
@@ -270,11 +283,18 @@
             totalMinutes = totalMinutes % (24 * 60);
             if (totalMinutes < 0) totalMinutes += 24 * 60;
 
-            const hours = Math.floor(totalMinutes / 60);
+            const hours24 = Math.floor(totalMinutes / 60);
             const minutes = Math.floor(totalMinutes % 60);
             const seconds = Math.floor((totalMinutes % 1) * 60);
 
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            // Convert to 12-hour format
+            const hours12 = hours24 % 12 || 12;
+            const period = hours24 < 12 ? 'AM' : 'PM';
+
+            return {
+                time: `${String(hours12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
+                period: period
+            };
         }
 
         function formatRealTime(date) {
@@ -354,8 +374,10 @@
             // Calculate current game time
             const currentGameMinutes = referenceGameMinutes + gameMinutesPassed;
 
-            // Display
-            document.getElementById('gameTime').textContent = formatGameTime(currentGameMinutes);
+            // Display with AM/PM
+            const formattedTime = formatGameTime(currentGameMinutes);
+            document.getElementById('gameTime').textContent = formattedTime.time;
+            document.getElementById('gamePeriod').textContent = formattedTime.period;
         }
 
         function updateRealTime() {
