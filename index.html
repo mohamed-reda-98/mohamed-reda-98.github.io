@@ -418,30 +418,33 @@
             };
         }
 
-        function calculateTimeUntilPortOpens(currentGameMinutes) {
+        function calculatePortChangeTime(currentGameMinutes, isPortOpen) {
             const currentHour = Math.floor(currentGameMinutes / 60) % 24;
+            let minutesUntilChange;
 
-            // Port opens at 7 AM
-            let minutesUntilOpen;
-            if (currentHour >= 19) {
-                // After 7 PM, wait until 7 AM next day
-                minutesUntilOpen = (24 - currentHour + 7) * 60 - (currentGameMinutes % 60);
-            } else if (currentHour < 7) {
-                // Before 7 AM, wait until 7 AM today
-                minutesUntilOpen = (7 - currentHour) * 60 - (currentGameMinutes % 60);
+            if (isPortOpen) {
+                // Port is open, calculate time until it closes at 7 PM (19:00)
+                minutesUntilChange = (19 - currentHour) * 60 - (currentGameMinutes % 60);
             } else {
-                return null; // Port is open
+                // Port is closed, calculate time until it opens at 7 AM (07:00)
+                if (currentHour >= 19) {
+                    // After 7 PM, wait until 7 AM next day
+                    minutesUntilChange = (24 - currentHour + 7) * 60 - (currentGameMinutes % 60);
+                } else if (currentHour < 7) {
+                    // Before 7 AM, wait until 7 AM today
+                    minutesUntilChange = (7 - currentHour) * 60 - (currentGameMinutes % 60);
+                }
             }
 
             // Convert game minutes to real minutes
-            const realMinutesUntilOpen = minutesUntilOpen / conversionRatio;
+            const realMinutesUntilChange = minutesUntilChange / conversionRatio;
 
-            // Calculate what real-world time it will open
-            const openTime = new Date(Date.now() + realMinutesUntilOpen * 60 * 1000);
+            // Calculate what real-world time it will change
+            const changeTime = new Date(Date.now() + realMinutesUntilChange * 60 * 1000);
 
             return {
-                realMinutes: realMinutesUntilOpen,
-                openTime: openTime
+                realMinutes: realMinutesUntilChange,
+                changeTime: changeTime
             };
         }
 
@@ -472,18 +475,20 @@
             const portCountdown = document.getElementById('portCountdown');
             const body = document.body;
 
-            if (hours24 >= 19 || hours24 < 7) {
+            const isPortClosed = hours24 >= 19 || hours24 < 7;
+
+            if (isPortClosed) {
                 // Port closed
                 clockDisplay.classList.add('port-closed');
                 body.classList.add('port-closed');
                 portStatus.textContent = '🔴 الميناء مغلق';
 
                 // Calculate time until port opens
-                const timeInfo = calculateTimeUntilPortOpens(totalMinutes);
+                const timeInfo = calculatePortChangeTime(totalMinutes, false);
                 if (timeInfo) {
                     const countdown = formatCountdownTime(timeInfo.realMinutes);
-                    const openTimeStr = formatRealTime(timeInfo.openTime);
-                    portCountdown.innerHTML = `⏰ يفتح بعد: ${countdown}<br>🕐 وقت الفتح: ${openTimeStr}`;
+                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
+                    portCountdown.innerHTML = `⏰ يفتح بعد: ${countdown}<br>🕐 وقت الفتح: ${changeTimeStr}`;
                     portCountdown.style.display = 'block';
                 }
             } else {
@@ -491,7 +496,15 @@
                 clockDisplay.classList.remove('port-closed');
                 body.classList.remove('port-closed');
                 portStatus.textContent = '🟢 الميناء مفتوح';
-                portCountdown.style.display = 'none';
+
+                // Calculate time until port closes
+                const timeInfo = calculatePortChangeTime(totalMinutes, true);
+                if (timeInfo) {
+                    const countdown = formatCountdownTime(timeInfo.realMinutes);
+                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
+                    portCountdown.innerHTML = `⏰ يغلق بعد: ${countdown}<br>🕐 وقت الإغلاق: ${changeTimeStr}`;
+                    portCountdown.style.display = 'block';
+                }
             }
         }
 
