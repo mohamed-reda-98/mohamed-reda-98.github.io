@@ -89,16 +89,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .time-input-wrapper {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .time-input-wrapper input {
-            flex: 1;
-        }
-
         .period-selector {
             display: flex;
             gap: 10px;
@@ -207,6 +197,15 @@
             animation: pulse 2s infinite;
         }
 
+        .port-countdown {
+            font-size: 1.1em;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -295,6 +294,10 @@
                 font-size: 1.4em;
             }
 
+            .port-countdown {
+                font-size: 0.95em;
+            }
+
             .period-selector {
                 flex-direction: column;
             }
@@ -345,6 +348,7 @@
             <div class="clock-section" id="clockSection">
                 <div class="clock-display" id="clockDisplay">
                     <div class="port-status" id="portStatus">الميناء مفتوح</div>
+                    <div class="port-countdown" id="portCountdown"></div>
                     <div class="clock-label">Current In-Game Time</div>
                     <div class="clock-time" id="gameTime">00:00:00</div>
                     <div class="clock-period" id="gamePeriod">AM</div>
@@ -378,19 +382,17 @@
             let hours = parseInt(parts[0]) || 0;
             const minutes = parseInt(parts[1]) || 0;
 
-            // Validate hours (1-12 for 12-hour format)
             if (hours < 1 || hours > 12) {
                 throw new Error('Hours must be between 1 and 12');
             }
 
-            // Convert to 24-hour format
             if (period === 'AM') {
                 if (hours === 12) {
-                    hours = 0; // 12 AM = 00:00
+                    hours = 0;
                 }
-            } else { // PM
+            } else {
                 if (hours !== 12) {
-                    hours += 12; // 1 PM = 13:00, but 12 PM stays 12:00
+                    hours += 12;
                 }
             }
 
@@ -405,35 +407,42 @@
             const minutes = Math.floor(totalMinutes % 60);
             const seconds = Math.floor((totalMinutes % 1) * 60);
 
-            // Convert to 12-hour format
             const hours12 = hours24 % 12 || 12;
             const period = hours24 < 12 ? 'AM' : 'PM';
 
             return {
                 time: `${String(hours12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
                 period: period,
-                hours24: hours24
+                hours24: hours24,
+                totalMinutes: totalMinutes
             };
         }
 
-        function updatePortStatus(hours24) {
-            const clockDisplay = document.getElementById('clockDisplay');
-            const portStatus = document.getElementById('portStatus');
-            const body = document.body;
+        function calculateTimeUntilPortOpens(currentGameMinutes) {
+            const currentHour = Math.floor(currentGameMinutes / 60) % 24;
 
-            // Port is closed from 7 PM (19:00) to 7 AM (07:00)
-            // Port is open from 7 AM (07:00) to 7 PM (19:00)
-            if (hours24 >= 19 || hours24 < 7) {
-                // Port closed (7 PM to 7 AM)
-                clockDisplay.classList.add('port-closed');
-                body.classList.add('port-closed');
-                portStatus.textContent = '🔴 الميناء مغلق';
+            // Port opens at 7 AM
+            let minutesUntilOpen;
+            if (currentHour >= 19) {
+                // After 7 PM, wait until 7 AM next day
+                minutesUntilOpen = (24 - currentHour + 7) * 60 - (currentGameMinutes % 60);
+            } else if (currentHour < 7) {
+                // Before 7 AM, wait until 7 AM today
+                minutesUntilOpen = (7 - currentHour) * 60 - (currentGameMinutes % 60);
             } else {
-                // Port open (7 AM to 7 PM)
-                clockDisplay.classList.remove('port-closed');
-                body.classList.remove('port-closed');
-                portStatus.textContent = '🟢 الميناء مفتوح';
+                return null; // Port is open
             }
+
+            // Convert game minutes to real minutes
+            const realMinutesUntilOpen = minutesUntilOpen / conversionRatio;
+
+            // Calculate what real-world time it will open
+            const openTime = new Date(Date.now() + realMinutesUntilOpen * 60 * 1000);
+
+            return {
+                realMinutes: realMinutesUntilOpen,
+                openTime: openTime
+            };
         }
 
         function formatRealTime(date) {
@@ -441,6 +450,49 @@
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
             return `${hours}:${minutes}:${seconds}`;
+        }
+
+        function formatCountdownTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = Math.floor(minutes % 60);
+            const secs = Math.floor((minutes % 1) * 60);
+
+            if (hours > 0) {
+                return `${hours}h ${mins}m ${secs}s`;
+            } else if (mins > 0) {
+                return `${mins}m ${secs}s`;
+            } else {
+                return `${secs}s`;
+            }
+        }
+
+        function updatePortStatus(hours24, totalMinutes) {
+            const clockDisplay = document.getElementById('clockDisplay');
+            const portStatus = document.getElementById('portStatus');
+            const portCountdown = document.getElementById('portCountdown');
+            const body = document.body;
+
+            if (hours24 >= 19 || hours24 < 7) {
+                // Port closed
+                clockDisplay.classList.add('port-closed');
+                body.classList.add('port-closed');
+                portStatus.textContent = '🔴 الميناء مغلق';
+
+                // Calculate time until port opens
+                const timeInfo = calculateTimeUntilPortOpens(totalMinutes);
+                if (timeInfo) {
+                    const countdown = formatCountdownTime(timeInfo.realMinutes);
+                    const openTimeStr = formatRealTime(timeInfo.openTime);
+                    portCountdown.innerHTML = `⏰ يفتح بعد: ${countdown}<br>🕐 وقت الفتح: ${openTimeStr}`;
+                    portCountdown.style.display = 'block';
+                }
+            } else {
+                // Port open
+                clockDisplay.classList.remove('port-closed');
+                body.classList.remove('port-closed');
+                portStatus.textContent = '🟢 الميناء مفتوح';
+                portCountdown.style.display = 'none';
+            }
         }
 
         function formatElapsedTime(milliseconds) {
@@ -469,16 +521,13 @@
             }
 
             try {
-                // Calculate conversion ratio
                 conversionRatio = 24 / dayHours;
                 referenceGameMinutes = parseTime(timeInput, period);
                 referenceRealTime = Date.now();
 
-                // Save start time
                 const startDate = new Date();
                 document.getElementById('startTime').textContent = formatRealTime(startDate);
 
-                // Update conversion info
                 const realMinPerGameHour = 60 / conversionRatio;
 
                 document.getElementById('conversionInfo').innerHTML = `
@@ -489,15 +538,12 @@
                     <strong>🚢 Port Hours:</strong> Open 7 AM - 7 PM, Closed 7 PM - 7 AM
                 `;
 
-                // Switch to clock view
                 document.getElementById('setupSection').classList.add('hidden');
                 document.getElementById('clockSection').classList.add('active');
 
-                // Clear any existing intervals
                 if (clockInterval) clearInterval(clockInterval);
                 if (realTimeInterval) clearInterval(realTimeInterval);
 
-                // Start auto-updating
                 clockInterval = setInterval(updateGameTime, 100);
                 realTimeInterval = setInterval(updateRealTime, 1000);
 
@@ -509,29 +555,21 @@
         }
 
         function updateGameTime() {
-            // Calculate elapsed real time in minutes
             const realMinutesPassed = (Date.now() - referenceRealTime) / (1000 * 60);
-
-            // Convert to game time
             const gameMinutesPassed = realMinutesPassed * conversionRatio;
-
-            // Calculate current game time
             const currentGameMinutes = referenceGameMinutes + gameMinutesPassed;
 
-            // Display with AM/PM
             const formattedTime = formatGameTime(currentGameMinutes);
             document.getElementById('gameTime').textContent = formattedTime.time;
             document.getElementById('gamePeriod').textContent = formattedTime.period;
 
-            // Update port status based on time
-            updatePortStatus(formattedTime.hours24);
+            updatePortStatus(formattedTime.hours24, formattedTime.totalMinutes);
         }
 
         function updateRealTime() {
             const now = new Date();
             document.getElementById('realTime').textContent = formatRealTime(now);
 
-            // Update elapsed time
             const elapsed = Date.now() - referenceRealTime;
             document.getElementById('elapsedTime').textContent = formatElapsedTime(elapsed);
         }
@@ -542,12 +580,9 @@
 
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('clockSection').classList.remove('active');
-
-            // Reset background
             document.body.classList.remove('port-closed');
         }
 
-        // Auto-restart on page visibility change to maintain accuracy
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden && clockInterval) {
                 updateGameTime();
