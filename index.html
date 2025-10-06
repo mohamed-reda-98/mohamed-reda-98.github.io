@@ -25,6 +25,10 @@
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
+        body.port-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
         main {
             max-width: 1200px;
             margin: 0 auto;
@@ -179,6 +183,22 @@
             box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
         }
 
+        .btn-toggle {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .btn-toggle:hover {
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-toggle.active {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-toggle.active:hover {
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
         .clock-section {
             display: none;
             text-align: center;
@@ -206,6 +226,10 @@
 
         .clock-display.port-closed {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .clock-display.port-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
         }
 
         .port-status {
@@ -367,7 +391,7 @@
 
                 <div class="input-group">
                     <label for="gameDayHours">⏱️ Game Day Duration (real hours)</label>
-                    <input type="number" step="0.001" id="gameDayHours" placeholder="e.g., 2.7333" value="2.7333">
+                    <input type="number" step="0.0001" id="gameDayHours" placeholder="e.g., 2.7276" value="2.7276">
                 </div>
 
                 <button onclick="startClock()">▶️ Start Auto Clock</button>
@@ -394,7 +418,8 @@
                     <div class="info-content" id="conversionInfo">--</div>
                 </div>
 
-                <button class="btn-change" onclick="changeSettings()">🔄 Change Settings</button>
+                <button id="togglePortBtn" class="btn-toggle" onclick="togglePortState()">🔄 Toggle Port State (Manual Override)</button>
+                <button class="btn-change" onclick="changeSettings()">⚙️ Change Settings</button>
             </div>
         </div>
     </main>
@@ -405,6 +430,8 @@
         let conversionRatio = 0;
         let clockInterval = null;
         let realTimeInterval = null;
+        let portStateOverride = null; // null = auto, true = force open, false = force closed
+        let lastHour = -1; // Track last hour to detect 7 AM/PM transitions
 
         function parseTime(timeStr, period) {
             const parts = timeStr.split(':').map(p => p.trim());
@@ -498,18 +525,113 @@
             }
         }
 
+        function togglePortState() {
+            const toggleBtn = document.getElementById('togglePortBtn');
+            
+            if (portStateOverride === null) {
+                // First time toggling - detect current state and reverse it
+                const portStatusText = document.getElementById('portStatus').textContent;
+                portStateOverride = portStatusText.includes('مفتوح') ? false : true;
+                toggleBtn.classList.add('active');
+                toggleBtn.textContent = '✅ Manual Override Active (Click to Toggle)';
+            } else {
+                // Toggle the override state
+                portStateOverride = !portStateOverride;
+            }
+            
+            updatePortStatusManual();
+        }
+
+        function updatePortStatusManual() {
+            const clockDisplay = document.getElementById('clockDisplay');
+            const portStatus = document.getElementById('portStatus');
+            const portCountdown = document.getElementById('portCountdown');
+            const body = document.body;
+
+            // Remove all state classes first
+            body.classList.remove('port-closed', 'port-warning');
+            clockDisplay.classList.remove('port-closed', 'port-warning');
+
+            if (portStateOverride === true) {
+                // Force port OPEN
+                portStatus.textContent = '🟢 الميناء مفتوح';
+                portCountdown.style.display = 'none';
+            } else if (portStateOverride === false) {
+                // Force port CLOSED
+                body.classList.add('port-closed');
+                clockDisplay.classList.add('port-closed');
+                portStatus.textContent = '🔴 الميناء مغلق';
+                portCountdown.style.display = 'none';
+            }
+        }
+
         function updatePortStatus(hours24, totalMinutes) {
+            // Check if we crossed 7 AM or 7 PM while in manual override
+            if (portStateOverride !== null) {
+                if (lastHour !== -1 && lastHour !== hours24) {
+                    // Hour changed - check if we crossed 7 or 19
+                    if (hours24 === 7 || hours24 === 19) {
+                        // Auto-toggle the override state
+                        portStateOverride = !portStateOverride;
+                    }
+                }
+                lastHour = hours24;
+                updatePortStatusManual();
+                return;
+            }
+
+            lastHour = hours24;
+
             const clockDisplay = document.getElementById('clockDisplay');
             const portStatus = document.getElementById('portStatus');
             const portCountdown = document.getElementById('portCountdown');
             const body = document.body;
 
             const isPortClosed = hours24 >= 19 || hours24 < 7;
+            
+            // Check warning periods
+            const totalMinutesIn24 = hours24 * 60 + (totalMinutes % 60);
+            // Warning before closing: 6:45 PM - 7:00 PM (18:45 - 19:00)
+            const isClosingWarning = totalMinutesIn24 >= (18 * 60 + 45) && totalMinutesIn24 < (19 * 60);
+            // Warning before opening: 6:45 AM - 7:00 AM (06:45 - 07:00)
+            const isOpeningWarning = totalMinutesIn24 >= (6 * 60 + 45) && totalMinutesIn24 < (7 * 60);
 
-            if (isPortClosed) {
+            // Remove all state classes first
+            body.classList.remove('port-closed', 'port-warning');
+            clockDisplay.classList.remove('port-closed', 'port-warning');
+
+            if (isOpeningWarning) {
+                // Warning period - 15 minutes before opening
+                body.classList.add('port-warning');
+                clockDisplay.classList.add('port-warning');
+                portStatus.textContent = '⚠️ الميناء يفتح قريباً';
+
+                // Calculate time until port opens
+                const timeInfo = calculatePortChangeTime(totalMinutes, false);
+                if (timeInfo) {
+                    const countdown = formatCountdownTime(timeInfo.realMinutes);
+                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
+                    portCountdown.innerHTML = `⚠️ OPENING SOON!<br>⏰ Opens After: ${countdown}<br>🕐 Opening Time(Real Time): ${changeTimeStr}`;
+                    portCountdown.style.display = 'block';
+                }
+            } else if (isClosingWarning) {
+                // Warning period - 15 minutes before closing
+                body.classList.add('port-warning');
+                clockDisplay.classList.add('port-warning');
+                portStatus.textContent = '⚠️ الميناء يغلق قريباً';
+
+                // Calculate time until port closes
+                const timeInfo = calculatePortChangeTime(totalMinutes, true);
+                if (timeInfo) {
+                    const countdown = formatCountdownTime(timeInfo.realMinutes);
+                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
+                    portCountdown.innerHTML = `⚠️ CLOSING SOON!<br>⏰ Closes After: ${countdown}<br>🕐 Closing Time(Real Time): ${changeTimeStr}`;
+                    portCountdown.style.display = 'block';
+                }
+            } else if (isPortClosed) {
                 // Port closed
-                clockDisplay.classList.add('port-closed');
                 body.classList.add('port-closed');
+                clockDisplay.classList.add('port-closed');
                 portStatus.textContent = '🔴 الميناء مغلق';
 
                 // Calculate time until port opens
@@ -522,8 +644,6 @@
                 }
             } else {
                 // Port open
-                clockDisplay.classList.remove('port-closed');
-                body.classList.remove('port-closed');
                 portStatus.textContent = '🟢 الميناء مفتوح';
 
                 // Calculate time until port closes
@@ -620,9 +740,16 @@
             if (clockInterval) clearInterval(clockInterval);
             if (realTimeInterval) clearInterval(realTimeInterval);
 
+            // Reset manual override
+            portStateOverride = null;
+            lastHour = -1;
+            const toggleBtn = document.getElementById('togglePortBtn');
+            toggleBtn.classList.remove('active');
+            toggleBtn.textContent = '🔄 Toggle Port State (Manual Override)';
+
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('clockSection').classList.remove('active');
-            document.body.classList.remove('port-closed');
+            document.body.classList.remove('port-closed', 'port-warning');
         }
 
         document.addEventListener('visibilitychange', function() {
