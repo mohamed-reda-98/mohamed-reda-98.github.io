@@ -4,13 +4,384 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>My Website</title>
+    <title>Mohamed Reda -Blaind Clock</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin: 40px 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .clock-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .clock-title {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .setup-section {
+            display: block;
+        }
+
+        .setup-section.hidden {
+            display: none;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-change {
+            background: #e74c3c;
+        }
+
+        .btn-change:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .clock-section {
+            display: none;
+            text-align: center;
+        }
+
+        .clock-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .clock-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .clock-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .clock-time {
+            font-size: 4em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin: 20px 0;
+        }
+
+        .real-time-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .real-time-panel strong {
+            color: #667eea;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d3e9f3 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-title {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-content {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .clock-container {
+                padding: 25px;
+            }
+
+            .clock-title {
+                font-size: 1.5em;
+            }
+
+            .clock-time {
+                font-size: 3em;
+            }
+        }
+    </style>
   </head>
   <body>
     <main>
-        <h1>Mohamed Reda Mafhouz1</h1>
+        <h1>Mohamed Reda Mafhouz</h1>
+
+        <div class="clock-container">
+            <h2 class="clock-title">⏰ Blain Game Clock</h2>
+
+            <!-- Setup Section -->
+            <div class="setup-section" id="setupSection">
+                <div class="input-group">
+                    <label for="referenceTime">🎮 Current Game Time (HH:MM)</label>
+                    <input type="text" id="referenceTime" placeholder="e.g., 3:00 or 14:30" value="3:00">
+                </div>
+
+                <div class="input-group">
+                    <label for="gameDayHours">⏱️ Game Day Duration (real hours)</label>
+                    <input type="number" step="0.001" id="gameDayHours" placeholder="e.g., 2.442" value="2.442">
+                </div>
+
+                <button onclick="startClock()">▶️ Start Auto Clock</button>
+            </div>
+
+            <!-- Clock Section -->
+            <div class="clock-section" id="clockSection">
+                <div class="clock-display">
+                    <div class="clock-label">Current In-Game Time</div>
+                    <div class="clock-time" id="gameTime">00:00:00</div>
+                </div>
+
+                <div class="real-time-panel">
+                    <strong>📅 Real Time:</strong> <span id="realTime">--:--:--</span><br>
+                    <strong>⏰ Started At:</strong> <span id="startTime">--:--:--</span><br>
+                    <strong>⏳ Running For:</strong> <span id="elapsedTime">0m 0s</span>
+                </div>
+
+                <div class="info-panel">
+                    <div class="info-title">📊 Conversion Info</div>
+                    <div class="info-content" id="conversionInfo">--</div>
+                </div>
+
+                <button class="btn-change" onclick="changeSettings()">🔄 Change Settings</button>
+            </div>
+        </div>
     </main>
-<!-- 	<script src="index.js"></script> -->
+
+    <script>
+        let referenceGameMinutes = 0;
+        let referenceRealTime = 0;
+        let conversionRatio = 0;
+        let clockInterval = null;
+        let realTimeInterval = null;
+
+        function parseTime(timeStr) {
+            const parts = timeStr.split(':').map(p => p.trim());
+            const hours = parseInt(parts[0]) || 0;
+            const minutes = parseInt(parts[1]) || 0;
+            return hours * 60 + minutes;
+        }
+
+        function formatGameTime(totalMinutes) {
+            totalMinutes = totalMinutes % (24 * 60);
+            if (totalMinutes < 0) totalMinutes += 24 * 60;
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = Math.floor(totalMinutes % 60);
+            const seconds = Math.floor((totalMinutes % 1) * 60);
+
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function formatRealTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        function formatElapsedTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            if (hours > 0) {
+                return `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                return `${minutes}m ${seconds}s`;
+            } else {
+                return `${seconds}s`;
+            }
+        }
+
+        function startClock() {
+            const timeInput = document.getElementById('referenceTime').value;
+            const dayHours = parseFloat(document.getElementById('gameDayHours').value);
+
+            if (!timeInput || !dayHours || dayHours <= 0) {
+                alert('Please enter valid values for both fields');
+                return;
+            }
+
+            // Calculate conversion ratio
+            conversionRatio = 24 / dayHours;
+            referenceGameMinutes = parseTime(timeInput);
+            referenceRealTime = Date.now();
+
+            // Save start time
+            const startDate = new Date();
+            document.getElementById('startTime').textContent = formatRealTime(startDate);
+
+            // Update conversion info
+            const realMinPerGameHour = 60 / conversionRatio;
+            const realSecPerGameMin = 60 / conversionRatio;
+
+            document.getElementById('conversionInfo').innerHTML = `
+                <strong>⚡ Speed:</strong> 1 real minute = ${conversionRatio.toFixed(4)} game minutes<br>
+                <strong>🔄 Ratio:</strong> 1 real hour = ${conversionRatio.toFixed(2)} game hours<br>
+                <strong>⏱️ Duration:</strong> 1 game hour = ${realMinPerGameHour.toFixed(2)} real minutes<br>
+                <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours
+            `;
+
+            // Switch to clock view
+            document.getElementById('setupSection').classList.add('hidden');
+            document.getElementById('clockSection').classList.add('active');
+
+            // Clear any existing intervals
+            if (clockInterval) clearInterval(clockInterval);
+            if (realTimeInterval) clearInterval(realTimeInterval);
+
+            // Start auto-updating
+            clockInterval = setInterval(updateGameTime, 100);
+            realTimeInterval = setInterval(updateRealTime, 1000);
+
+            updateGameTime();
+            updateRealTime();
+        }
+
+        function updateGameTime() {
+            // Calculate elapsed real time in minutes
+            const realMinutesPassed = (Date.now() - referenceRealTime) / (1000 * 60);
+
+            // Convert to game time
+            const gameMinutesPassed = realMinutesPassed * conversionRatio;
+
+            // Calculate current game time
+            const currentGameMinutes = referenceGameMinutes + gameMinutesPassed;
+
+            // Display
+            document.getElementById('gameTime').textContent = formatGameTime(currentGameMinutes);
+        }
+
+        function updateRealTime() {
+            const now = new Date();
+            document.getElementById('realTime').textContent = formatRealTime(now);
+
+            // Update elapsed time
+            const elapsed = Date.now() - referenceRealTime;
+            document.getElementById('elapsedTime').textContent = formatElapsedTime(elapsed);
+        }
+
+        function changeSettings() {
+            if (clockInterval) clearInterval(clockInterval);
+            if (realTimeInterval) clearInterval(realTimeInterval);
+
+            document.getElementById('setupSection').classList.remove('hidden');
+            document.getElementById('clockSection').classList.remove('active');
+        }
+
+        // Auto-restart on page visibility change to maintain accuracy
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && clockInterval) {
+                updateGameTime();
+                updateRealTime();
+            }
+        });
+    </script>
   </body>
 </html>
