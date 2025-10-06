@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mohamed Reda - Blaine Clock</title>
+    <title>Mo Reda - Blaine Clock</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <style>
         * {
@@ -52,6 +52,15 @@
             color: #667eea;
             margin-bottom: 30px;
             font-size: 2em;
+        }
+
+        .user-info {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.9em;
+            margin: 5px 0;
+            opacity: 0.85;
+            font-weight: 500;
         }
 
         .setup-section {
@@ -282,6 +291,10 @@
                 font-size: 1.5em;
             }
 
+            .user-info {
+                font-size: 0.8em;
+            }
+
             .clock-time {
                 font-size: 3em;
             }
@@ -310,10 +323,12 @@
   </head>
   <body>
     <main>
-        <h1>Mohamed Reda Mafhouz</h1>
+        <h6>Developed By Mohamed Reda Mahfouz</h6>
 
         <div class="clock-container">
-            <h2 class="clock-title">⏰ Blain Game Clock</h2>
+            <h2 class="clock-title">Mo Reda - Blaine Clock</h2>
+            <p class="user-info">Discord Username: moh4medreda</p>
+            <p class="user-info">Ingame Name: موو رضا</p>
 
             <!-- Setup Section -->
             <div class="setup-section" id="setupSection">
@@ -488,7 +503,7 @@
                 if (timeInfo) {
                     const countdown = formatCountdownTime(timeInfo.realMinutes);
                     const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⏰ يفتح بعد: ${countdown}<br>🕐 وقت الفتح: ${changeTimeStr}`;
+                    portCountdown.innerHTML = `⏰ Opens After(Real Time): ${countdown}<br>🕐 Opening Time (Real Time): ${changeTimeStr}`;
                     portCountdown.style.display = 'block';
                 }
             } else {
@@ -502,7 +517,7 @@
                 if (timeInfo) {
                     const countdown = formatCountdownTime(timeInfo.realMinutes);
                     const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⏰ يغلق بعد: ${countdown}<br>🕐 وقت الإغلاق: ${changeTimeStr}`;
+                    portCountdown.innerHTML = `⏰ Closes After: ${countdown}<br>🕐 Closing Time(Real Time): ${changeTimeStr}`;
                     portCountdown.style.display = 'block';
                 }
             }
