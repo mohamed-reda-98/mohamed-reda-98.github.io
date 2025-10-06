@@ -68,7 +68,8 @@
             font-weight: 600;
         }
 
-        input {
+        input[type="text"],
+        input[type="number"] {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -81,6 +82,53 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .time-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-input-wrapper input {
+            flex: 1;
+        }
+
+        .period-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .period-selector label {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .period-selector input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .period-selector input[type="radio"]:checked + span {
+            color: #667eea;
+        }
+
+        .period-selector label:has(input:checked) {
+            background: #e8f4f8;
+            border-color: #667eea;
+        }
+
+        .period-selector label:hover {
+            border-color: #667eea;
+            background: #f0f7ff;
         }
 
         button {
@@ -216,6 +264,14 @@
             .clock-period {
                 font-size: 1.2em;
             }
+
+            .period-selector {
+                flex-direction: column;
+            }
+
+            .period-selector label {
+                justify-content: center;
+            }
         }
     </style>
   </head>
@@ -230,7 +286,21 @@
             <div class="setup-section" id="setupSection">
                 <div class="input-group">
                     <label for="referenceTime">🎮 Current Game Time (HH:MM)</label>
-                    <input type="text" id="referenceTime" placeholder="e.g., 3:00 or 14:30" value="3:00">
+                    <input type="text" id="referenceTime" placeholder="e.g., 3:00 or 8:45" value="3:00">
+                </div>
+
+                <div class="input-group">
+                    <label>⏰ Time Period</label>
+                    <div class="period-selector">
+                        <label>
+                            <input type="radio" name="timePeriod" value="AM" checked>
+                            <span>AM</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="timePeriod" value="PM">
+                            <span>PM</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -272,10 +342,27 @@
         let clockInterval = null;
         let realTimeInterval = null;
 
-        function parseTime(timeStr) {
+        function parseTime(timeStr, period) {
             const parts = timeStr.split(':').map(p => p.trim());
-            const hours = parseInt(parts[0]) || 0;
+            let hours = parseInt(parts[0]) || 0;
             const minutes = parseInt(parts[1]) || 0;
+
+            // Validate hours (1-12 for 12-hour format)
+            if (hours < 1 || hours > 12) {
+                throw new Error('Hours must be between 1 and 12');
+            }
+
+            // Convert to 24-hour format
+            if (period === 'AM') {
+                if (hours === 12) {
+                    hours = 0; // 12 AM = 00:00
+                }
+            } else { // PM
+                if (hours !== 12) {
+                    hours += 12; // 1 PM = 13:00, but 12 PM stays 12:00
+                }
+            }
+
             return hours * 60 + minutes;
         }
 
@@ -322,46 +409,50 @@
         function startClock() {
             const timeInput = document.getElementById('referenceTime').value;
             const dayHours = parseFloat(document.getElementById('gameDayHours').value);
+            const period = document.querySelector('input[name="timePeriod"]:checked').value;
 
             if (!timeInput || !dayHours || dayHours <= 0) {
                 alert('Please enter valid values for both fields');
                 return;
             }
 
-            // Calculate conversion ratio
-            conversionRatio = 24 / dayHours;
-            referenceGameMinutes = parseTime(timeInput);
-            referenceRealTime = Date.now();
+            try {
+                // Calculate conversion ratio
+                conversionRatio = 24 / dayHours;
+                referenceGameMinutes = parseTime(timeInput, period);
+                referenceRealTime = Date.now();
 
-            // Save start time
-            const startDate = new Date();
-            document.getElementById('startTime').textContent = formatRealTime(startDate);
+                // Save start time
+                const startDate = new Date();
+                document.getElementById('startTime').textContent = formatRealTime(startDate);
 
-            // Update conversion info
-            const realMinPerGameHour = 60 / conversionRatio;
-            const realSecPerGameMin = 60 / conversionRatio;
+                // Update conversion info
+                const realMinPerGameHour = 60 / conversionRatio;
 
-            document.getElementById('conversionInfo').innerHTML = `
-                <strong>⚡ Speed:</strong> 1 real minute = ${conversionRatio.toFixed(4)} game minutes<br>
-                <strong>🔄 Ratio:</strong> 1 real hour = ${conversionRatio.toFixed(2)} game hours<br>
-                <strong>⏱️ Duration:</strong> 1 game hour = ${realMinPerGameHour.toFixed(2)} real minutes<br>
-                <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours
-            `;
+                document.getElementById('conversionInfo').innerHTML = `
+                    <strong>⚡ Speed:</strong> 1 real minute = ${conversionRatio.toFixed(4)} game minutes<br>
+                    <strong>🔄 Ratio:</strong> 1 real hour = ${conversionRatio.toFixed(2)} game hours<br>
+                    <strong>⏱️ Duration:</strong> 1 game hour = ${realMinPerGameHour.toFixed(2)} real minutes<br>
+                    <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours
+                `;
 
-            // Switch to clock view
-            document.getElementById('setupSection').classList.add('hidden');
-            document.getElementById('clockSection').classList.add('active');
+                // Switch to clock view
+                document.getElementById('setupSection').classList.add('hidden');
+                document.getElementById('clockSection').classList.add('active');
 
-            // Clear any existing intervals
-            if (clockInterval) clearInterval(clockInterval);
-            if (realTimeInterval) clearInterval(realTimeInterval);
+                // Clear any existing intervals
+                if (clockInterval) clearInterval(clockInterval);
+                if (realTimeInterval) clearInterval(realTimeInterval);
 
-            // Start auto-updating
-            clockInterval = setInterval(updateGameTime, 100);
-            realTimeInterval = setInterval(updateRealTime, 1000);
+                // Start auto-updating
+                clockInterval = setInterval(updateGameTime, 100);
+                realTimeInterval = setInterval(updateRealTime, 1000);
 
-            updateGameTime();
-            updateRealTime();
+                updateGameTime();
+                updateRealTime();
+            } catch (error) {
+                alert('Please enter a valid time (HH:MM format, hours between 1-12)');
+            }
         }
 
         function updateGameTime() {
