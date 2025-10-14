@@ -445,6 +445,131 @@
             font-size: 0.95em;
         }
 
+        /* Equipment Section */
+        .equipment-section {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px dashed #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .equipment-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .equipment-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .equipment-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .equipment-inputs {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .equipment-inputs.active {
+            display: grid;
+        }
+
+        .equipment-input-group {
+            margin: 0;
+        }
+
+        .equipment-input-group label {
+            font-size: 0.85em;
+            color: #856404;
+        }
+
+        .equipment-input-group input {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        /* Individual Job Results */
+        .job-result {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .job-result.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .job-result-title {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .job-result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .job-result-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .job-result-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .job-result-item.equipment-cost {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        .job-result-item.net-profit {
+            background: rgba(40, 167, 69, 0.3);
+        }
+
+        .job-result-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .job-result-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
         .totals-panel {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -465,8 +590,8 @@
 
         .totals-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
         }
 
         .total-item {
@@ -474,6 +599,14 @@
             padding: 20px;
             border-radius: 10px;
             backdrop-filter: blur(10px);
+        }
+
+        .total-item.equipment {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        .total-item.net {
+            background: rgba(40, 167, 69, 0.3);
         }
 
         .total-label {
@@ -549,6 +682,14 @@
 
             .total-value {
                 font-size: 2em;
+            }
+
+            .job-result-value {
+                font-size: 1.2em;
+            }
+
+            .equipment-inputs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -647,7 +788,49 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="port" data-money="700" data-xp="12" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <!-- Equipment Section -->
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-port" onchange="toggleEquipment('port')">
+                                <label for="equip-port">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-port">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="port" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=port]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="port" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=port]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-port">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-port">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-port">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-port" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-port">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-port" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-port">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Farms -->
@@ -663,7 +846,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="farm" data-money="250" data-xp="7" 
-                               oninput="calculateTotals()" placeholder="متوسط: 250 / 7 XP">
+                               oninput="calculateJob(this)" placeholder="متوسط: 250 / 7 XP">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-farm" onchange="toggleEquipment('farm')">
+                                <label for="equip-farm">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-farm">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="farm" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=farm]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="farm" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=farm]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-farm">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-farm">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-farm">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-farm" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-farm">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-farm" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-farm">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Poultry -->
@@ -679,7 +903,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="poultry" data-money="190" data-xp="5" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-poultry" onchange="toggleEquipment('poultry')">
+                                <label for="equip-poultry">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-poultry">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="poultry" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=poultry]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="poultry" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=poultry]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-poultry">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-poultry">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-poultry">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-poultry" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-poultry">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-poultry" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-poultry">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Wood -->
@@ -695,7 +960,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="wood" data-money="225" data-xp="6" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-wood" onchange="toggleEquipment('wood')">
+                                <label for="equip-wood">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-wood">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="wood" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=wood]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="wood" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=wood]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-wood">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-wood">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-wood">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-wood" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-wood">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-wood" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-wood">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Fish -->
@@ -711,7 +1017,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="fish" data-money="364" data-xp="6" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-fish" onchange="toggleEquipment('fish')">
+                                <label for="equip-fish">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-fish">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="fish" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=fish]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="fish" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=fish]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-fish">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-fish">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-fish">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-fish" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-fish">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-fish" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-fish">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Fabrics -->
@@ -727,7 +1074,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="fabric" data-money="315" data-xp="8" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-fabric" onchange="toggleEquipment('fabric')">
+                                <label for="equip-fabric">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-fabric">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="fabric" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=fabric]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="fabric" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=fabric]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-fabric">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-fabric">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-fabric">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-fabric" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-fabric">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-fabric" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-fabric">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Oil & Gas -->
@@ -743,7 +1131,48 @@
                         </div>
                         <input type="number" class="quantity-input" min="0" value="0" 
                                data-job="oil" data-money="605" data-xp="14" 
-                               oninput="calculateTotals()">
+                               oninput="calculateJob(this)">
+                        
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-oil" onchange="toggleEquipment('oil')">
+                                <label for="equip-oil">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-oil">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="oil" 
+                                           class="equipment-price" oninput="calculateJob(document.querySelector('[data-job=oil]'))">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="oil" 
+                                           class="equipment-count" oninput="calculateJob(document.querySelector('[data-job=oil]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-result" id="result-oil">
+                            <div class="job-result-title">📊 النتيجة</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-oil">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-oil">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-oil" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-oil">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-oil" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-oil">0</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Minerals -->
@@ -759,36 +1188,78 @@
                         <div class="sub-item">
                             <div class="sub-item-title">🥇 الذهب - ربح: 700 / خبرة: 8</div>
                             <input type="number" class="quantity-input" min="0" value="0" 
-                                   data-job="mineral-gold" data-money="700" data-xp="8" 
-                                   oninput="calculateTotals()">
+                                   data-job="mineral" data-mineral="gold" data-money="700" data-xp="8" 
+                                   oninput="calculateMinerals()">
                         </div>
                         
                         <div class="sub-item">
                             <div class="sub-item-title">⚙️ الحديد - ربح: 120 / خبرة: 5</div>
                             <input type="number" class="quantity-input" min="0" value="0" 
-                                   data-job="mineral-iron" data-money="120" data-xp="5" 
-                                   oninput="calculateTotals()">
+                                   data-job="mineral" data-mineral="iron" data-money="120" data-xp="5" 
+                                   oninput="calculateMinerals()">
                         </div>
                         
                         <div class="sub-item">
                             <div class="sub-item-title">🟠 النحاس - ربح: 185 / خبرة: 7</div>
                             <input type="number" class="quantity-input" min="0" value="0" 
-                                   data-job="mineral-copper" data-money="185" data-xp="7" 
-                                   oninput="calculateTotals()">
+                                   data-job="mineral" data-mineral="copper" data-money="185" data-xp="7" 
+                                   oninput="calculateMinerals()">
                         </div>
                         
                         <div class="sub-item">
                             <div class="sub-item-title">💎 الألماس - ربح: 10000 / خبرة: 15</div>
                             <input type="number" class="quantity-input" min="0" value="0" 
-                                   data-job="mineral-diamond" data-money="10000" data-xp="15" 
-                                   oninput="calculateTotals()">
+                                   data-job="mineral" data-mineral="diamond" data-money="10000" data-xp="15" 
+                                   oninput="calculateMinerals()">
+                        </div>
+
+                        <div class="equipment-section">
+                            <div class="equipment-checkbox">
+                                <input type="checkbox" id="equip-mineral" onchange="toggleEquipment('mineral')">
+                                <label for="equip-mineral">🛠️ يحتاج عدة؟</label>
+                            </div>
+                            <div class="equipment-inputs" id="equip-inputs-mineral">
+                                <div class="equipment-input-group">
+                                    <label>سعر العدة</label>
+                                    <input type="number" min="0" value="0" data-equip-job="mineral" 
+                                           class="equipment-price" oninput="calculateMinerals()">
+                                </div>
+                                <div class="equipment-input-group">
+                                    <label>عدد العدد</label>
+                                    <input type="number" min="0" value="0" data-equip-job="mineral" 
+                                           class="equipment-count" oninput="calculateMinerals()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Combined Minerals Result -->
+                        <div class="job-result" id="result-minerals">
+                            <div class="job-result-title">📊 إجمالي المعادن</div>
+                            <div class="job-result-grid">
+                                <div class="job-result-item">
+                                    <div class="job-result-label">💵 الأموال (إجمالي)</div>
+                                    <div class="job-result-value" id="money-minerals">0</div>
+                                </div>
+                                <div class="job-result-item">
+                                    <div class="job-result-label">⭐ الخبرة</div>
+                                    <div class="job-result-value" id="xp-minerals">0</div>
+                                </div>
+                                <div class="job-result-item equipment-cost full-width" id="equip-cost-mineral" style="display: none;">
+                                    <div class="job-result-label">🛠️ تكلفة العدد</div>
+                                    <div class="job-result-value" id="equip-value-mineral">0</div>
+                                </div>
+                                <div class="job-result-item net-profit full-width" id="net-profit-mineral" style="display: none;">
+                                    <div class="job-result-label">💰 الربح الصافي</div>
+                                    <div class="job-result-value" id="net-value-mineral">0</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Totals Panel -->
                 <div class="totals-panel">
-                    <div class="totals-title">💰 الإجمالي</div>
+                    <div class="totals-title">💰 الإجمالي الكلي</div>
                     <div class="totals-grid">
                         <div class="total-item">
                             <div class="total-label">💵 إجمالي الأموال</div>
@@ -798,6 +1269,14 @@
                             <div class="total-label">⭐ إجمالي الخبرة</div>
                             <div class="total-value" id="totalXP">0</div>
                         </div>
+                        <div class="total-item equipment">
+                            <div class="total-label">🛠️ إجمالي تكلفة العدد</div>
+                            <div class="total-value" id="totalEquipment">0</div>
+                        </div>
+                        <div class="total-item net">
+                            <div class="total-label">💰 صافي الربح</div>
+                            <div class="total-value" id="totalNetProfit">0</div>
+                        </div>
                     </div>
                     <button class="btn-reset" onclick="resetCalculator()">🔄 إعادة تعيين</button>
                 </div>
@@ -806,7 +1285,7 @@
     </main>
 
     <script>
-        // Clock functionality
+        // Clock functionality (unchanged)
         let referenceGameMinutes = 0;
         let referenceRealTime = 0;
         let conversionRatio = 0;
@@ -1122,10 +1601,129 @@
             document.body.classList.remove('port-closed', 'port-warning');
         }
 
-        // Calculator functionality
-        function calculateTotals() {
-            let totalMoney = 0;
-            let totalXP = 0;
+        // Calculator functionality with equipment
+        function toggleEquipment(jobName) {
+            const checkbox = document.getElementById(`equip-${jobName}`);
+            const inputs = document.getElementById(`equip-inputs-${jobName}`);
+            
+            if (checkbox.checked) {
+                inputs.classList.add('active');
+            } else {
+                inputs.classList.remove('active');
+            }
+        }
+
+        function getEquipmentCost(jobName) {
+            const checkbox = document.getElementById(`equip-${jobName}`);
+            if (!checkbox || !checkbox.checked) {
+                return 0;
+            }
+
+            const priceInput = document.querySelector(`input.equipment-price[data-equip-job="${jobName}"]`);
+            const countInput = document.querySelector(`input.equipment-count[data-equip-job="${jobName}"]`);
+            
+            const price = parseFloat(priceInput?.value) || 0;
+            const count = parseFloat(countInput?.value) || 0;
+            
+            return price * count;
+        }
+
+        function calculateJob(inputElement) {
+            const quantity = parseInt(inputElement.value) || 0;
+            const money = parseFloat(inputElement.dataset.money) || 0;
+            const xp = parseFloat(inputElement.dataset.xp) || 0;
+            const jobName = inputElement.dataset.job;
+
+            const totalMoney = quantity * money;
+            const totalXP = quantity * xp;
+            const equipmentCost = getEquipmentCost(jobName);
+            const netProfit = totalMoney - equipmentCost;
+
+            // Update individual job result
+            const resultDiv = document.getElementById(`result-${jobName}`);
+            const moneyDisplay = document.getElementById(`money-${jobName}`);
+            const xpDisplay = document.getElementById(`xp-${jobName}`);
+            const equipCostDiv = document.getElementById(`equip-cost-${jobName}`);
+            const equipValueDisplay = document.getElementById(`equip-value-${jobName}`);
+            const netProfitDiv = document.getElementById(`net-profit-${jobName}`);
+            const netValueDisplay = document.getElementById(`net-value-${jobName}`);
+
+            if (quantity > 0) {
+                resultDiv.classList.add('active');
+                moneyDisplay.textContent = totalMoney.toLocaleString();
+                xpDisplay.textContent = totalXP.toLocaleString();
+                
+                if (equipmentCost > 0) {
+                    equipCostDiv.style.display = 'block';
+                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
+                    netProfitDiv.style.display = 'block';
+                    netValueDisplay.textContent = netProfit.toLocaleString();
+                } else {
+                    equipCostDiv.style.display = 'none';
+                    netProfitDiv.style.display = 'none';
+                }
+            } else {
+                resultDiv.classList.remove('active');
+            }
+
+            // Update grand totals
+            calculateGrandTotals();
+        }
+
+        function calculateMinerals() {
+            let totalMineralMoney = 0;
+            let totalMineralXP = 0;
+
+            // Get all mineral inputs
+            const mineralInputs = document.querySelectorAll('input[data-job="mineral"]');
+            
+            mineralInputs.forEach(input => {
+                const quantity = parseInt(input.value) || 0;
+                const money = parseFloat(input.dataset.money) || 0;
+                const xp = parseFloat(input.dataset.xp) || 0;
+
+                totalMineralMoney += quantity * money;
+                totalMineralXP += quantity * xp;
+            });
+
+            const equipmentCost = getEquipmentCost('mineral');
+            const netProfit = totalMineralMoney - equipmentCost;
+
+            // Update combined minerals result
+            const resultDiv = document.getElementById('result-minerals');
+            const moneyDisplay = document.getElementById('money-minerals');
+            const xpDisplay = document.getElementById('xp-minerals');
+            const equipCostDiv = document.getElementById('equip-cost-mineral');
+            const equipValueDisplay = document.getElementById('equip-value-mineral');
+            const netProfitDiv = document.getElementById('net-profit-mineral');
+            const netValueDisplay = document.getElementById('net-value-mineral');
+
+            if (totalMineralMoney > 0 || totalMineralXP > 0) {
+                resultDiv.classList.add('active');
+                moneyDisplay.textContent = totalMineralMoney.toLocaleString();
+                xpDisplay.textContent = totalMineralXP.toLocaleString();
+                
+                if (equipmentCost > 0) {
+                    equipCostDiv.style.display = 'block';
+                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
+                    netProfitDiv.style.display = 'block';
+                    netValueDisplay.textContent = netProfit.toLocaleString();
+                } else {
+                    equipCostDiv.style.display = 'none';
+                    netProfitDiv.style.display = 'none';
+                }
+            } else {
+                resultDiv.classList.remove('active');
+            }
+
+            // Update grand totals
+            calculateGrandTotals();
+        }
+
+        function calculateGrandTotals() {
+            let grandTotalMoney = 0;
+            let grandTotalXP = 0;
+            let grandTotalEquipment = 0;
 
             const inputs = document.querySelectorAll('.quantity-input');
             inputs.forEach(input => {
@@ -1133,20 +1731,47 @@
                 const money = parseFloat(input.dataset.money) || 0;
                 const xp = parseFloat(input.dataset.xp) || 0;
 
-                totalMoney += quantity * money;
-                totalXP += quantity * xp;
+                grandTotalMoney += quantity * money;
+                grandTotalXP += quantity * xp;
             });
 
-            document.getElementById('totalMoney').textContent = totalMoney.toLocaleString();
-            document.getElementById('totalXP').textContent = totalXP.toLocaleString();
+            // Calculate total equipment costs
+            const jobNames = ['port', 'farm', 'poultry', 'wood', 'fish', 'fabric', 'oil', 'mineral'];
+            jobNames.forEach(job => {
+                grandTotalEquipment += getEquipmentCost(job);
+            });
+
+            const grandNetProfit = grandTotalMoney - grandTotalEquipment;
+
+            document.getElementById('totalMoney').textContent = grandTotalMoney.toLocaleString();
+            document.getElementById('totalXP').textContent = grandTotalXP.toLocaleString();
+            document.getElementById('totalEquipment').textContent = grandTotalEquipment.toLocaleString();
+            document.getElementById('totalNetProfit').textContent = grandNetProfit.toLocaleString();
         }
 
         function resetCalculator() {
-            const inputs = document.querySelectorAll('.quantity-input');
+            const inputs = document.querySelectorAll('.quantity-input, .equipment-price, .equipment-count');
             inputs.forEach(input => {
                 input.value = 0;
             });
-            calculateTotals();
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            const equipInputs = document.querySelectorAll('.equipment-inputs');
+            equipInputs.forEach(input => {
+                input.classList.remove('active');
+            });
+            
+            // Hide all individual results
+            const results = document.querySelectorAll('.job-result');
+            results.forEach(result => {
+                result.classList.remove('active');
+            });
+            
+            calculateGrandTotals();
         }
 
         document.addEventListener('visibilitychange', function() {
