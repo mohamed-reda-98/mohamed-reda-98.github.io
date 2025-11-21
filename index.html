@@ -511,6 +511,59 @@
             font-size: 14px;
         }
 
+        /* Bills Section */
+        .bills-section {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px dashed #e74c3c;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .bills-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .bills-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .bills-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        .bills-inputs {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .bills-inputs.active {
+            display: block;
+        }
+
+        .bills-input-group {
+            margin: 0;
+        }
+
+        .bills-input-group label {
+            font-size: 0.85em;
+            color: #c0392b;
+        }
+
+        .bills-input-group input {
+            padding: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+
         /* Individual Job Results */
         .job-result {
             display: none;
@@ -566,6 +619,10 @@
             background: rgba(255, 193, 7, 0.3);
         }
 
+        .job-result-item.bills-cost {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
         .job-result-item.net-profit {
             background: rgba(40, 167, 69, 0.3);
         }
@@ -615,6 +672,10 @@
 
         .total-item.equipment {
             background: rgba(255, 193, 7, 0.3);
+        }
+
+        .total-item.bills {
+            background: rgba(231, 76, 60, 0.3);
         }
 
         .total-item.net {
@@ -835,14 +896,14 @@
     <main>
         <h1>Developed By Mohamed Reda Mahfouz</h1>
 
-        <!-- Tab Navigation (REORDERED) -->
+        <!-- Tab Navigation -->
         <div class="tab-navigation">
             <button class="tab-btn active" onclick="switchTab('calculator')">🧮 Calculator</button>
             <button class="tab-btn" onclick="switchTab('leveling')">📊 Leveling</button>
             <button class="tab-btn" onclick="switchTab('clock')">⏰ Clock</button>
         </div>
 
-        <!-- Calculator Tab (NOW FIRST) -->
+        <!-- Calculator Tab -->
         <div class="tab-content active" id="calculatorTab">
             <div class="calculator-container">
                 <h2 class="clock-title">💰 حاسبة الأرباح والخبرة</h2>
@@ -887,6 +948,21 @@
                             </div>
                         </div>
                         
+                        <!-- Bills Section -->
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-port" onchange="toggleBills('port')">
+                                <label for="bills-port">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-port">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="port" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=port]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-port">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -901,6 +977,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-port" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-port">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-port" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-port">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-port" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -944,6 +1024,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-farm" onchange="toggleBills('farm')">
+                                <label for="bills-farm">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-farm">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="farm" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=farm]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-farm">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -958,6 +1052,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-farm" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-farm">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-farm" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-farm">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-farm" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1001,6 +1099,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-poultry" onchange="toggleBills('poultry')">
+                                <label for="bills-poultry">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-poultry">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="poultry" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=poultry]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-poultry">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -1015,6 +1127,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-poultry" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-poultry">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-poultry" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-poultry">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-poultry" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1058,6 +1174,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-wood" onchange="toggleBills('wood')">
+                                <label for="bills-wood">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-wood">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="wood" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=wood]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-wood">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -1072,6 +1202,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-wood" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-wood">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-wood" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-wood">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-wood" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1115,6 +1249,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-fish" onchange="toggleBills('fish')">
+                                <label for="bills-fish">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-fish">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="fish" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=fish]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-fish">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -1129,6 +1277,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-fish" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-fish">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-fish" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-fish">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-fish" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1172,6 +1324,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-fabric" onchange="toggleBills('fabric')">
+                                <label for="bills-fabric">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-fabric">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="fabric" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=fabric]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-fabric">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -1186,6 +1352,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-fabric" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-fabric">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-fabric" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-fabric">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-fabric" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1229,6 +1399,20 @@
                             </div>
                         </div>
                         
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-oil" onchange="toggleBills('oil')">
+                                <label for="bills-oil">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-oil">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="oil" 
+                                           class="bills-price" oninput="calculateJob(document.querySelector('[data-job=oil]'))">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="job-result" id="result-oil">
                             <div class="job-result-title">📊 النتيجة</div>
                             <div class="job-result-grid">
@@ -1243,6 +1427,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-oil" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-oil">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-oil" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-oil">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-oil" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1309,6 +1497,20 @@
                             </div>
                         </div>
 
+                        <div class="bills-section">
+                            <div class="bills-checkbox">
+                                <input type="checkbox" id="bills-mineral" onchange="toggleBills('mineral')">
+                                <label for="bills-mineral">📄 فواتير؟</label>
+                            </div>
+                            <div class="bills-inputs" id="bills-inputs-mineral">
+                                <div class="bills-input-group">
+                                    <label>مبلغ الفاتورة</label>
+                                    <input type="number" min="0" value="0" data-bills-job="mineral" 
+                                           class="bills-price" oninput="calculateMinerals()">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Combined Minerals Result -->
                         <div class="job-result" id="result-minerals">
                             <div class="job-result-title">📊 إجمالي المعادن</div>
@@ -1324,6 +1526,10 @@
                                 <div class="job-result-item equipment-cost full-width" id="equip-cost-mineral" style="display: none;">
                                     <div class="job-result-label">🛠️ تكلفة العدد</div>
                                     <div class="job-result-value" id="equip-value-mineral">0</div>
+                                </div>
+                                <div class="job-result-item bills-cost full-width" id="bills-cost-mineral" style="display: none;">
+                                    <div class="job-result-label">📄 تكلفة الفواتير</div>
+                                    <div class="job-result-value" id="bills-value-mineral">0</div>
                                 </div>
                                 <div class="job-result-item net-profit full-width" id="net-profit-mineral" style="display: none;">
                                     <div class="job-result-label">💰 الربح الصافي</div>
@@ -1350,6 +1556,10 @@
                             <div class="total-label">🛠️ إجمالي تكلفة العدد</div>
                             <div class="total-value" id="totalEquipment">0</div>
                         </div>
+                        <div class="total-item bills">
+                            <div class="total-label">📄 إجمالي الفواتير</div>
+                            <div class="total-value" id="totalBills">0</div>
+                        </div>
                         <div class="total-item net">
                             <div class="total-label">💰 صافي الربح</div>
                             <div class="total-value" id="totalNetProfit">0</div>
@@ -1360,7 +1570,7 @@
             </div>
         </div>
 
-        <!-- Leveling Tab (NOW SECOND) -->
+        <!-- Leveling Tab -->
         <div class="tab-content" id="levelingTab">
             <div class="leveling-container">
                 <h2 class="clock-title">📊 حاسبة الترقية</h2>
@@ -1388,9 +1598,7 @@
                 <div class="input-section active" id="levelInputSection">
                     <div class="input-group">
                         <label for="currentLevel">🎯 المستوى الحالي (Current Level)</label>
-                        <select id="currentLevel" onchange="updateTargetLevelOptions()">
-                            <option value="">-- اختر المستوى --</option>
-                        </select>
+                        <input type="number" id="currentLevel" min="1" max="200" placeholder="أدخل المستوى الحالي (1-200)">
                     </div>
                 </div>
 
@@ -1404,19 +1612,16 @@
 
                 <div class="input-group">
                     <label for="targetLevel">🏆 المستوى المطلوب (Target Level)</label>
-                    <select id="targetLevel">
-                        <option value="">-- اختر المستوى --</option>
-                    </select>
+                    <input type="number" id="targetLevel" min="1" max="200" placeholder="أدخل المستوى المطلوب (1-200)">
                 </div>
 
                 <button onclick="calculateLeveling()">🚀 احسب الخبرة المطلوبة</button>
 
                 <div class="level-result" id="levelResult">
                     <div class="level-result-title">📈 نتيجة الحساب</div>
-                                         <div class="level-stat-label">🎯 الخبرة المطلوبة للمستوي القادم</div>
+                    <div class="level-stat-label">🎯 الخبرة المطلوبة للمستوي القادم</div>
 
                     <div class="progress-bar-container">
-
                         <div class="progress-bar" id="progressBar">0%</div>
                     </div>
 
@@ -1446,7 +1651,7 @@
             </div>
         </div>
 
-        <!-- Clock Tab (NOW THIRD) -->
+        <!-- Clock Tab -->
         <div class="tab-content" id="clockTab">
             <div class="clock-container">
                 <h2 class="clock-title">Mo Reda - Blaine Clock</h2>
@@ -1512,216 +1717,59 @@
     </main>
 
     <script>
-        // Rank progression table
-        const RANK_DATA = [
-            {rank: 1, totalRP: 0, rpToLevel: 800},
-            {rank: 2, totalRP: 800, rpToLevel: 1300},
-            {rank: 3, totalRP: 2100, rpToLevel: 1700},
-            {rank: 4, totalRP: 3800, rpToLevel: 2300},
-            {rank: 5, totalRP: 6100, rpToLevel: 3400},
-            {rank: 6, totalRP: 9500, rpToLevel: 3000},
-            {rank: 7, totalRP: 12500, rpToLevel: 3500},
-            {rank: 8, totalRP: 16000, rpToLevel: 3800},
-            {rank: 9, totalRP: 19800, rpToLevel: 4200},
-            {rank: 10, totalRP: 24000, rpToLevel: 4500},
-            {rank: 11, totalRP: 28500, rpToLevel: 4900},
-            {rank: 12, totalRP: 33400, rpToLevel: 5300},
-            {rank: 13, totalRP: 38700, rpToLevel: 5500},
-            {rank: 14, totalRP: 44200, rpToLevel: 6000},
-            {rank: 15, totalRP: 50200, rpToLevel: 6200},
-            {rank: 16, totalRP: 56400, rpToLevel: 6600},
-            {rank: 17, totalRP: 63000, rpToLevel: 6900},
-            {rank: 18, totalRP: 69900, rpToLevel: 7200},
-            {rank: 19, totalRP: 77100, rpToLevel: 7600},
-            {rank: 20, totalRP: 84700, rpToLevel: 7800},
-            {rank: 21, totalRP: 92500, rpToLevel: 8200},
-            {rank: 22, totalRP: 100700, rpToLevel: 8500},
-            {rank: 23, totalRP: 109200, rpToLevel: 8800},
-            {rank: 24, totalRP: 118000, rpToLevel: 9100},
-            {rank: 25, totalRP: 127100, rpToLevel: 9400},
-            {rank: 26, totalRP: 136500, rpToLevel: 9700},
-            {rank: 27, totalRP: 146200, rpToLevel: 10000},
-            {rank: 28, totalRP: 156200, rpToLevel: 10300},
-            {rank: 29, totalRP: 166500, rpToLevel: 10600},
-            {rank: 30, totalRP: 177100, rpToLevel: 10900},
-            {rank: 31, totalRP: 188000, rpToLevel: 11200},
-            {rank: 32, totalRP: 199200, rpToLevel: 11500},
-            {rank: 33, totalRP: 210700, rpToLevel: 11700},
-            {rank: 34, totalRP: 222400, rpToLevel: 12100},
-            {rank: 35, totalRP: 234500, rpToLevel: 12300},
-            {rank: 36, totalRP: 246800, rpToLevel: 12600},
-            {rank: 37, totalRP: 259400, rpToLevel: 12900},
-            {rank: 38, totalRP: 272300, rpToLevel: 13200},
-            {rank: 39, totalRP: 285500, rpToLevel: 13500},
-            {rank: 40, totalRP: 299000, rpToLevel: 13700},
-            {rank: 41, totalRP: 312700, rpToLevel: 14100},
-            {rank: 42, totalRP: 326800, rpToLevel: 14200},
-            {rank: 43, totalRP: 341000, rpToLevel: 14600},
-            {rank: 44, totalRP: 355600, rpToLevel: 14900},
-            {rank: 45, totalRP: 370500, rpToLevel: 15100},
-            {rank: 46, totalRP: 385600, rpToLevel: 15400},
-            {rank: 47, totalRP: 401000, rpToLevel: 15600},
-            {rank: 48, totalRP: 416600, rpToLevel: 16000},
-            {rank: 49, totalRP: 432600, rpToLevel: 16200},
-            {rank: 50, totalRP: 448800, rpToLevel: 16400},
-            {rank: 51, totalRP: 465200, rpToLevel: 16800},
-            {rank: 52, totalRP: 482000, rpToLevel: 17000},
-            {rank: 53, totalRP: 499000, rpToLevel: 17300},
-            {rank: 54, totalRP: 516300, rpToLevel: 17500},
-            {rank: 55, totalRP: 533800, rpToLevel: 17800},
-            {rank: 56, totalRP: 551600, rpToLevel: 18000},
-            {rank: 57, totalRP: 569600, rpToLevel: 18400},
-            {rank: 58, totalRP: 588000, rpToLevel: 18500},
-            {rank: 59, totalRP: 606500, rpToLevel: 18900},
-            {rank: 60, totalRP: 625400, rpToLevel: 19100},
-            {rank: 61, totalRP: 644500, rpToLevel: 19300},
-            {rank: 62, totalRP: 663800, rpToLevel: 19600},
-            {rank: 63, totalRP: 683400, rpToLevel: 19900},
-            {rank: 64, totalRP: 703300, rpToLevel: 20100},
-            {rank: 65, totalRP: 723400, rpToLevel: 20400},
-            {rank: 66, totalRP: 743800, rpToLevel: 20700},
-            {rank: 67, totalRP: 764500, rpToLevel: 20900},
-            {rank: 68, totalRP: 785400, rpToLevel: 21100},
-            {rank: 69, totalRP: 806500, rpToLevel: 21400},
-            {rank: 70, totalRP: 827900, rpToLevel: 21700},
-            {rank: 71, totalRP: 849600, rpToLevel: 21900},
-            {rank: 72, totalRP: 871500, rpToLevel: 22100},
-            {rank: 73, totalRP: 893600, rpToLevel: 22400},
-            {rank: 74, totalRP: 916000, rpToLevel: 22700},
-            {rank: 75, totalRP: 938700, rpToLevel: 22900},
-            {rank: 76, totalRP: 961600, rpToLevel: 23100},
-            {rank: 77, totalRP: 984700, rpToLevel: 23400},
-            {rank: 78, totalRP: 1008100, rpToLevel: 23700},
-            {rank: 79, totalRP: 1031800, rpToLevel: 23900},
-            {rank: 80, totalRP: 1055700, rpToLevel: 24100},
-            {rank: 81, totalRP: 1079800, rpToLevel: 24400},
-            {rank: 82, totalRP: 1104200, rpToLevel: 24600},
-            {rank: 83, totalRP: 1128800, rpToLevel: 24900},
-            {rank: 84, totalRP: 1153700, rpToLevel: 25100},
-            {rank: 85, totalRP: 1178800, rpToLevel: 25400},
-            {rank: 86, totalRP: 1204200, rpToLevel: 25600},
-            {rank: 87, totalRP: 1229800, rpToLevel: 25800},
-            {rank: 88, totalRP: 1255600, rpToLevel: 26100},
-            {rank: 89, totalRP: 1281700, rpToLevel: 26400},
-            {rank: 90, totalRP: 1308100, rpToLevel: 26500},
-            {rank: 91, totalRP: 1334600, rpToLevel: 26800},
-            {rank: 92, totalRP: 1361400, rpToLevel: 27100},
-            {rank: 93, totalRP: 1388500, rpToLevel: 27300},
-            {rank: 94, totalRP: 1415800, rpToLevel: 27500},
-            {rank: 95, totalRP: 1443300, rpToLevel: 27800},
-            {rank: 96, totalRP: 1471100, rpToLevel: 28000},
-            {rank: 97, totalRP: 1499100, rpToLevel: 28200},
-            {rank: 98, totalRP: 1527300, rpToLevel: 28500},
-            {rank: 99, totalRP: 1555800, rpToLevel: 28550},
-            {rank: 100, totalRP: 1584350, rpToLevel: 28600},
-            {rank: 101, totalRP: 1612950, rpToLevel: 28650},
-            {rank: 102, totalRP: 1641600, rpToLevel: 28700},
-            {rank: 103, totalRP: 1670300, rpToLevel: 28750},
-            {rank: 104, totalRP: 1699050, rpToLevel: 28800},
-            {rank: 105, totalRP: 1727850, rpToLevel: 28850},
-            {rank: 106, totalRP: 1756700, rpToLevel: 28900},
-            {rank: 107, totalRP: 1785600, rpToLevel: 28950},
-            {rank: 108, totalRP: 1814550, rpToLevel: 29000},
-            {rank: 109, totalRP: 1843550, rpToLevel: 29050},
-            {rank: 110, totalRP: 1872600, rpToLevel: 29100},
-            {rank: 111, totalRP: 1901700, rpToLevel: 29150},
-            {rank: 112, totalRP: 1930850, rpToLevel: 29200},
-            {rank: 113, totalRP: 1960050, rpToLevel: 29250},
-            {rank: 114, totalRP: 1989300, rpToLevel: 29300},
-            {rank: 115, totalRP: 2018600, rpToLevel: 29350},
-            {rank: 116, totalRP: 2047950, rpToLevel: 29400},
-            {rank: 117, totalRP: 2077350, rpToLevel: 29450},
-            {rank: 118, totalRP: 2106800, rpToLevel: 29500},
-            {rank: 119, totalRP: 2136300, rpToLevel: 29550},
-            {rank: 120, totalRP: 2165850, rpToLevel: 29600},
-            {rank: 121, totalRP: 2195450, rpToLevel: 29650},
-            {rank: 122, totalRP: 2225100, rpToLevel: 29700},
-            {rank: 123, totalRP: 2254800, rpToLevel: 29750},
-            {rank: 124, totalRP: 2284550, rpToLevel: 29800},
-            {rank: 125, totalRP: 2314350, rpToLevel: 29850},
-            {rank: 126, totalRP: 2344200, rpToLevel: 29900},
-            {rank: 127, totalRP: 2374100, rpToLevel: 29950},
-            {rank: 128, totalRP: 2404050, rpToLevel: 30000},
-            {rank: 129, totalRP: 2434050, rpToLevel: 30050},
-            {rank: 130, totalRP: 2464100, rpToLevel: 30100},
-            {rank: 131, totalRP: 2494200, rpToLevel: 30150},
-            {rank: 132, totalRP: 2524350, rpToLevel: 30200},
-            {rank: 133, totalRP: 2554550, rpToLevel: 30250},
-            {rank: 134, totalRP: 2584800, rpToLevel: 30300},
-            {rank: 135, totalRP: 2615100, rpToLevel: 30350},
-            {rank: 136, totalRP: 2645450, rpToLevel: 30400},
-            {rank: 137, totalRP: 2675850, rpToLevel: 30450},
-            {rank: 138, totalRP: 2706300, rpToLevel: 30500},
-            {rank: 139, totalRP: 2736800, rpToLevel: 30550},
-            {rank: 140, totalRP: 2767350, rpToLevel: 30600},
-            {rank: 141, totalRP: 2797950, rpToLevel: 30650},
-            {rank: 142, totalRP: 2828600, rpToLevel: 30700},
-            {rank: 143, totalRP: 2859300, rpToLevel: 30750},
-            {rank: 144, totalRP: 2890050, rpToLevel: 30800},
-            {rank: 145, totalRP: 2920850, rpToLevel: 30850},
-            {rank: 146, totalRP: 2951700, rpToLevel: 30900},
-            {rank: 147, totalRP: 2982600, rpToLevel: 30950},
-            {rank: 148, totalRP: 3013550, rpToLevel: 31000},
-            {rank: 149, totalRP: 3044550, rpToLevel: 31050},
-            {rank: 150, totalRP: 3075600, rpToLevel: 31100},
-            {rank: 151, totalRP: 3106700, rpToLevel: 31150},
-            {rank: 152, totalRP: 3137850, rpToLevel: 31200},
-            {rank: 153, totalRP: 3169050, rpToLevel: 31250},
-            {rank: 154, totalRP: 3200300, rpToLevel: 31300},
-            {rank: 155, totalRP: 3231600, rpToLevel: 31350},
-            {rank: 156, totalRP: 3262950, rpToLevel: 31400},
-            {rank: 157, totalRP: 3294350, rpToLevel: 31450},
-            {rank: 158, totalRP: 3325800, rpToLevel: 31500},
-            {rank: 159, totalRP: 3357300, rpToLevel: 31550},
-            {rank: 160, totalRP: 3388850, rpToLevel: 31600},
-            {rank: 161, totalRP: 3420450, rpToLevel: 31650},
-            {rank: 162, totalRP: 3452100, rpToLevel: 31700},
-            {rank: 163, totalRP: 3483800, rpToLevel: 31750},
-            {rank: 164, totalRP: 3515550, rpToLevel: 31800},
-            {rank: 165, totalRP: 3547350, rpToLevel: 31850},
-            {rank: 166, totalRP: 3579200, rpToLevel: 31900},
-            {rank: 167, totalRP: 3611100, rpToLevel: 31950},
-            {rank: 168, totalRP: 3643050, rpToLevel: 32000},
-            {rank: 169, totalRP: 3675050, rpToLevel: 32050},
-            {rank: 170, totalRP: 3707100, rpToLevel: 32100},
-            {rank: 171, totalRP: 3739200, rpToLevel: 32150},
-            {rank: 172, totalRP: 3771350, rpToLevel: 32200},
-            {rank: 173, totalRP: 3803550, rpToLevel: 32250},
-            {rank: 174, totalRP: 3835800, rpToLevel: 32300},
-            {rank: 175, totalRP: 3868100, rpToLevel: 32350},
-            {rank: 176, totalRP: 3900450, rpToLevel: 32400},
-            {rank: 177, totalRP: 3932850, rpToLevel: 32450},
-            {rank: 178, totalRP: 3965300, rpToLevel: 32500},
-            {rank: 179, totalRP: 3997800, rpToLevel: 32550},
-            {rank: 180, totalRP: 4030350, rpToLevel: 32600},
-            {rank: 181, totalRP: 4062950, rpToLevel: 32650},
-            {rank: 182, totalRP: 4095600, rpToLevel: 32700},
-            {rank: 183, totalRP: 4128300, rpToLevel: 32750},
-            {rank: 184, totalRP: 4161050, rpToLevel: 32800},
-            {rank: 185, totalRP: 4193850, rpToLevel: 32850},
-            {rank: 186, totalRP: 4226700, rpToLevel: 32900},
-            {rank: 187, totalRP: 4259600, rpToLevel: 32950},
-            {rank: 188, totalRP: 4292550, rpToLevel: 33000},
-            {rank: 189, totalRP: 4325550, rpToLevel: 33050},
-            {rank: 190, totalRP: 4358600, rpToLevel: 33100},
-            {rank: 191, totalRP: 4391700, rpToLevel: 33150},
-            {rank: 192, totalRP: 4424850, rpToLevel: 33200},
-            {rank: 193, totalRP: 4458050, rpToLevel: 33250},
-            {rank: 194, totalRP: 4491300, rpToLevel: 33300},
-            {rank: 195, totalRP: 4524600, rpToLevel: 33350},
-            {rank: 196, totalRP: 4557950, rpToLevel: 33400},
-            {rank: 197, totalRP: 4591350, rpToLevel: 33450},
-            {rank: 198, totalRP: 4624800, rpToLevel: 33500},
-            {rank: 199, totalRP: 4658300, rpToLevel: 33550},
-            {rank: 200, totalRP: 4691850, rpToLevel: 33600}
-        ];
+        // ==================== LEVELING SYSTEM ====================
+        // Dynamic level calculation based on formula
+        function calculateRPForLevel(level) {
+            if (level === 1) return 0;
+            
+            let totalRP = 0;
+            
+            for (let i = 1; i < level; i++) {
+                if (i === 1) {
+                    totalRP += 800;
+                } else if (i <= 5) {
+                    totalRP += 800 + (i - 1) * 500;
+                } else if (i <= 20) {
+                    totalRP += 3000 + (i - 6) * 300;
+                } else if (i <= 50) {
+                    totalRP += 7800 + (i - 21) * 400;
+                } else if (i <= 99) {
+                    totalRP += 16400 + (i - 51) * 500;
+                } else {
+                    // Level 100-200: gradual increment of 50 RP per level
+                    totalRP += 28550 + (i - 100) * 50;
+                }
+            }
+            
+            return totalRP;
+        }
 
-        // NEW: Toggle between level selection and manual RP input
+        function getRPToNextLevel(level) {
+            if (level === 1) return 800;
+            if (level <= 5) return 800 + (level - 1) * 500;
+            if (level <= 20) return 3000 + (level - 6) * 300;
+            if (level <= 50) return 7800 + (level - 21) * 400;
+            if (level <= 99) return 16400 + (level - 51) * 500;
+            if (level <= 200) return 28550 + (level - 100) * 50;
+            return 0;
+        }
+
+        function findLevelFromRP(currentRP) {
+            for (let level = 1; level <= 200; level++) {
+                let rpForLevel = calculateRPForLevel(level);
+                let rpForNextLevel = calculateRPForLevel(level + 1);
+                
+                if (currentRP >= rpForLevel && currentRP < rpForNextLevel) {
+                    return level;
+                }
+            }
+            return 200; // Max level
+        }
+
         function toggleInputMode() {
             const mode = document.querySelector('input[name="inputMode"]:checked').value;
             const levelSection = document.getElementById('levelInputSection');
             const manualSection = document.getElementById('manualInputSection');
-            const targetLevelSelect = document.getElementById('targetLevel');
 
             if (mode === 'level') {
                 levelSection.classList.add('active');
@@ -1729,143 +1777,72 @@
             } else {
                 levelSection.classList.remove('active');
                 manualSection.classList.add('active');
-                // Populate all target levels when manual mode is selected
-                targetLevelSelect.innerHTML = '<option value="">-- اختر المستوى --</option>';
-                RANK_DATA.forEach(rank => {
-                    const option = document.createElement('option');
-                    option.value = rank.rank;
-                    option.textContent = `Level ${rank.rank}`;
-                    targetLevelSelect.appendChild(option);
-                });
             }
-        }
-
-        // Initialize level dropdowns
-        function initializeLevelDropdowns() {
-            const currentLevelSelect = document.getElementById('currentLevel');
-            
-            RANK_DATA.forEach(rank => {
-                const option = document.createElement('option');
-                option.value = rank.rank;
-                option.textContent = `Level ${rank.rank}`;
-                currentLevelSelect.appendChild(option);
-            });
-        }
-
-        function updateTargetLevelOptions() {
-            const currentLevel = parseInt(document.getElementById('currentLevel').value);
-            const targetLevelSelect = document.getElementById('targetLevel');
-            
-            // Clear target level options
-            targetLevelSelect.innerHTML = '<option value="">-- اختر المستوى --</option>';
-            
-            if (!currentLevel) {
-                return;
-            }
-
-            // Populate target levels (only levels higher than current)
-            RANK_DATA.forEach(rank => {
-                if (rank.rank > currentLevel) {
-                    const option = document.createElement('option');
-                    option.value = rank.rank;
-                    option.textContent = `Level ${rank.rank}`;
-                    targetLevelSelect.appendChild(option);
-                }
-            });
         }
 
         function calculateLeveling() {
-    const mode = document.querySelector('input[name="inputMode"]:checked').value;
-    let currentLevel, currentRP;
-    const targetLevel = parseInt(document.getElementById('targetLevel').value);
+            const mode = document.querySelector('input[name="inputMode"]:checked').value;
+            let currentLevel, currentRP;
+            const targetLevel = parseInt(document.getElementById('targetLevel').value);
 
-    if (mode === 'level') {
-        currentLevel = parseInt(document.getElementById('currentLevel').value);
-        if (!currentLevel) {
-            alert('الرجاء اختيار المستوى الحالي');
-            return;
-        }
-        const currentLevelData = RANK_DATA.find(r => r.rank === currentLevel);
-        currentRP = currentLevelData.totalRP;
-    } else {
-        currentRP = parseInt(document.getElementById('manualCurrentRP').value);
-        if (isNaN(currentRP) || currentRP < 0) {
-            alert('الرجاء إدخال نقاط الخبرة الحالية');
-            return;
-        }
-        // Find the current level based on RP
-        let foundLevel = null;
-        for (let i = RANK_DATA.length - 1; i >= 0; i--) {
-            if (currentRP >= RANK_DATA[i].totalRP) {
-                foundLevel = RANK_DATA[i].rank;
-                break;
+            if (mode === 'level') {
+                currentLevel = parseInt(document.getElementById('currentLevel').value);
+                if (!currentLevel || currentLevel < 1 || currentLevel > 200) {
+                    alert('الرجاء إدخال مستوى صحيح (1-200)');
+                    return;
+                }
+                currentRP = calculateRPForLevel(currentLevel);
+            } else {
+                currentRP = parseInt(document.getElementById('manualCurrentRP').value);
+                if (isNaN(currentRP) || currentRP < 0) {
+                    alert('الرجاء إدخال نقاط الخبرة الحالية');
+                    return;
+                }
+                currentLevel = findLevelFromRP(currentRP);
             }
+
+            if (!targetLevel || targetLevel < 1 || targetLevel > 200) {
+                alert('الرجاء إدخال مستوى مطلوب صحيح (1-200)');
+                return;
+            }
+
+            const targetRP = calculateRPForLevel(targetLevel);
+
+            if (targetRP <= currentRP) {
+                alert('المستوى المطلوب يجب أن يكون أعلى من مستواك الحالي');
+                return;
+            }
+
+            const remainingRP = targetRP - currentRP;
+            
+            // Calculate progress within CURRENT level (towards NEXT level)
+            const currentLevelStartRP = calculateRPForLevel(currentLevel);
+            const nextLevelStartRP = calculateRPForLevel(currentLevel + 1);
+            const rpInCurrentLevel = currentRP - currentLevelStartRP;
+            const rpNeededForNextLevel = nextLevelStartRP - currentLevelStartRP;
+            let progressPercentage = (rpInCurrentLevel / rpNeededForNextLevel) * 100;
+
+            if (currentLevel >= 200) {
+                progressPercentage = 100;
+            }
+
+            // Update result display
+            document.getElementById('resultCurrentLevel').textContent = currentLevel;
+            document.getElementById('resultTargetLevel').textContent = targetLevel;
+            document.getElementById('resultCurrentRP').textContent = currentRP.toLocaleString();
+            document.getElementById('resultTargetRP').textContent = targetRP.toLocaleString();
+            document.getElementById('resultRemainingRP').textContent = remainingRP.toLocaleString();
+            
+            // Update progress bar
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = Math.max(5, Math.min(100, progressPercentage)) + '%';
+            progressBar.textContent = progressPercentage.toFixed(1) + '%';
+
+            // Show result
+            document.getElementById('levelResult').classList.add('active');
         }
-        currentLevel = foundLevel || 1;
-    }
 
-    if (!targetLevel) {
-        alert('الرجاء اختيار المستوى المطلوب');
-        return;
-    }
-
-    const targetLevelData = RANK_DATA.find(r => r.rank === targetLevel);
-    const targetRP = targetLevelData.totalRP;
-
-    if (targetRP <= currentRP) {
-        alert('المستوى المطلوب يجب أن يكون أعلى من مستواك الحالي');
-        return;
-    }
-
-    const remainingRP = targetRP - currentRP;
-    
-    // Calculate progress within CURRENT level (towards NEXT level)
-    const currentLevelData = RANK_DATA.find(r => r.rank === currentLevel);
-    const nextLevelData = RANK_DATA.find(r => r.rank === currentLevel + 1);
-    
-    let progressPercentage = 0;
-    if (nextLevelData) {
-        const currentLevelStartRP = currentLevelData.totalRP;
-        const nextLevelStartRP = nextLevelData.totalRP;
-        const rpInCurrentLevel = currentRP - currentLevelStartRP;
-        const rpNeededForNextLevel = nextLevelStartRP - currentLevelStartRP;
-        progressPercentage = (rpInCurrentLevel / rpNeededForNextLevel) * 100;
-    } else {
-        // Already at max level
-        progressPercentage = 100;
-    }
-
-    // Update result display
-    document.getElementById('resultCurrentLevel').textContent = currentLevel;
-    document.getElementById('resultTargetLevel').textContent = targetLevel;
-    document.getElementById('resultCurrentRP').textContent = currentRP.toLocaleString();
-    document.getElementById('resultTargetRP').textContent = targetRP.toLocaleString();
-    document.getElementById('resultRemainingRP').textContent = remainingRP.toLocaleString();
-    
-    // Update progress bar - showing progress towards NEXT level
-    const progressBar = document.getElementById('progressBar');
-    progressBar.style.width = Math.max(5, Math.min(100, progressPercentage)) + '%';
-    progressBar.textContent = progressPercentage.toFixed(1) + '%';
-
-    // Show result
-    document.getElementById('levelResult').classList.add('active');
-}
-
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeLevelDropdowns();
-        });
-
-        // Clock functionality (unchanged from original code)
-        let referenceGameMinutes = 0;
-        let referenceRealTime = 0;
-        let conversionRatio = 0;
-        let clockInterval = null;
-        let realTimeInterval = null;
-        let portStateOverride = null;
-        let lastHour = -1;
-
+        // ==================== CALCULATOR SYSTEM ====================
         function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const btns = document.querySelectorAll('.tab-btn');
@@ -1875,15 +1852,250 @@
             
             if (tabName === 'clock') {
                 document.getElementById('clockTab').classList.add('active');
-                btns[2].classList.add('active'); // Changed index
+                btns[2].classList.add('active');
             } else if (tabName === 'calculator') {
                 document.getElementById('calculatorTab').classList.add('active');
-                btns[0].classList.add('active'); // Changed index
+                btns[0].classList.add('active');
             } else if (tabName === 'leveling') {
                 document.getElementById('levelingTab').classList.add('active');
-                btns[1].classList.add('active'); // Changed index
+                btns[1].classList.add('active');
             }
         }
+
+        function toggleEquipment(jobName) {
+            const checkbox = document.getElementById(`equip-${jobName}`);
+            const inputs = document.getElementById(`equip-inputs-${jobName}`);
+            
+            if (checkbox.checked) {
+                inputs.classList.add('active');
+            } else {
+                inputs.classList.remove('active');
+            }
+        }
+
+        function toggleBills(jobName) {
+            const checkbox = document.getElementById(`bills-${jobName}`);
+            const inputs = document.getElementById(`bills-inputs-${jobName}`);
+            
+            if (checkbox.checked) {
+                inputs.classList.add('active');
+            } else {
+                inputs.classList.remove('active');
+            }
+        }
+
+        function getEquipmentCost(jobName) {
+            const checkbox = document.getElementById(`equip-${jobName}`);
+            if (!checkbox || !checkbox.checked) {
+                return 0;
+            }
+
+            const priceInput = document.querySelector(`input.equipment-price[data-equip-job="${jobName}"]`);
+            const countInput = document.querySelector(`input.equipment-count[data-equip-job="${jobName}"]`);
+            
+            const price = parseFloat(priceInput?.value) || 0;
+            const count = parseFloat(countInput?.value) || 0;
+            
+            return price * count;
+        }
+
+        function getBillsCost(jobName) {
+            const checkbox = document.getElementById(`bills-${jobName}`);
+            if (!checkbox || !checkbox.checked) {
+                return 0;
+            }
+
+            const priceInput = document.querySelector(`input.bills-price[data-bills-job="${jobName}"]`);
+            const price = parseFloat(priceInput?.value) || 0;
+            
+            return price;
+        }
+
+        function calculateJob(inputElement) {
+            const quantity = parseInt(inputElement.value) || 0;
+            const money = parseFloat(inputElement.dataset.money) || 0;
+            const xp = parseFloat(inputElement.dataset.xp) || 0;
+            const jobName = inputElement.dataset.job;
+
+            const totalMoney = quantity * money;
+            const totalXP = quantity * xp;
+            const equipmentCost = getEquipmentCost(jobName);
+            const billsCost = getBillsCost(jobName);
+            const netProfit = totalMoney - equipmentCost - billsCost;
+
+            // Update individual job result
+            const resultDiv = document.getElementById(`result-${jobName}`);
+            const moneyDisplay = document.getElementById(`money-${jobName}`);
+            const xpDisplay = document.getElementById(`xp-${jobName}`);
+            const equipCostDiv = document.getElementById(`equip-cost-${jobName}`);
+            const equipValueDisplay = document.getElementById(`equip-value-${jobName}`);
+            const billsCostDiv = document.getElementById(`bills-cost-${jobName}`);
+            const billsValueDisplay = document.getElementById(`bills-value-${jobName}`);
+            const netProfitDiv = document.getElementById(`net-profit-${jobName}`);
+            const netValueDisplay = document.getElementById(`net-value-${jobName}`);
+
+            if (quantity > 0) {
+                resultDiv.classList.add('active');
+                moneyDisplay.textContent = totalMoney.toLocaleString();
+                xpDisplay.textContent = totalXP.toLocaleString();
+                
+                if (equipmentCost > 0) {
+                    equipCostDiv.style.display = 'block';
+                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
+                } else {
+                    equipCostDiv.style.display = 'none';
+                }
+
+                if (billsCost > 0) {
+                    billsCostDiv.style.display = 'block';
+                    billsValueDisplay.textContent = billsCost.toLocaleString();
+                } else {
+                    billsCostDiv.style.display = 'none';
+                }
+
+                if (equipmentCost > 0 || billsCost > 0) {
+                    netProfitDiv.style.display = 'block';
+                    netValueDisplay.textContent = netProfit.toLocaleString();
+                } else {
+                    netProfitDiv.style.display = 'none';
+                }
+            } else {
+                resultDiv.classList.remove('active');
+            }
+
+            // Update grand totals
+            calculateGrandTotals();
+        }
+
+        function calculateMinerals() {
+            let totalMineralMoney = 0;
+            let totalMineralXP = 0;
+
+            // Get all mineral inputs
+            const mineralInputs = document.querySelectorAll('input[data-job="mineral"]');
+            
+            mineralInputs.forEach(input => {
+                const quantity = parseInt(input.value) || 0;
+                const money = parseFloat(input.dataset.money) || 0;
+                const xp = parseFloat(input.dataset.xp) || 0;
+
+                totalMineralMoney += quantity * money;
+                totalMineralXP += quantity * xp;
+            });
+
+            const equipmentCost = getEquipmentCost('mineral');
+            const billsCost = getBillsCost('mineral');
+            const netProfit = totalMineralMoney - equipmentCost - billsCost;
+
+            // Update combined minerals result
+            const resultDiv = document.getElementById('result-minerals');
+            const moneyDisplay = document.getElementById('money-minerals');
+            const xpDisplay = document.getElementById('xp-minerals');
+            const equipCostDiv = document.getElementById('equip-cost-mineral');
+            const equipValueDisplay = document.getElementById('equip-value-mineral');
+            const billsCostDiv = document.getElementById('bills-cost-mineral');
+            const billsValueDisplay = document.getElementById('bills-value-mineral');
+            const netProfitDiv = document.getElementById('net-profit-mineral');
+            const netValueDisplay = document.getElementById('net-value-mineral');
+
+            if (totalMineralMoney > 0 || totalMineralXP > 0) {
+                resultDiv.classList.add('active');
+                moneyDisplay.textContent = totalMineralMoney.toLocaleString();
+                xpDisplay.textContent = totalMineralXP.toLocaleString();
+                
+                if (equipmentCost > 0) {
+                    equipCostDiv.style.display = 'block';
+                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
+                } else {
+                    equipCostDiv.style.display = 'none';
+                }
+
+                if (billsCost > 0) {
+                    billsCostDiv.style.display = 'block';
+                    billsValueDisplay.textContent = billsCost.toLocaleString();
+                } else {
+                    billsCostDiv.style.display = 'none';
+                }
+
+                if (equipmentCost > 0 || billsCost > 0) {
+                    netProfitDiv.style.display = 'block';
+                    netValueDisplay.textContent = netProfit.toLocaleString();
+                } else {
+                    netProfitDiv.style.display = 'none';
+                }
+            } else {
+                resultDiv.classList.remove('active');
+            }
+
+            // Update grand totals
+            calculateGrandTotals();
+        }
+
+        function calculateGrandTotals() {
+            let grandTotalMoney = 0;
+            let grandTotalXP = 0;
+            let grandTotalEquipment = 0;
+            let grandTotalBills = 0;
+
+            const inputs = document.querySelectorAll('.quantity-input');
+            inputs.forEach(input => {
+                const quantity = parseInt(input.value) || 0;
+                const money = parseFloat(input.dataset.money) || 0;
+                const xp = parseFloat(input.dataset.xp) || 0;
+
+                grandTotalMoney += quantity * money;
+                grandTotalXP += quantity * xp;
+            });
+
+            // Calculate total equipment costs and bills
+            const jobNames = ['port', 'farm', 'poultry', 'wood', 'fish', 'fabric', 'oil', 'mineral'];
+            jobNames.forEach(job => {
+                grandTotalEquipment += getEquipmentCost(job);
+                grandTotalBills += getBillsCost(job);
+            });
+
+            const grandNetProfit = grandTotalMoney - grandTotalEquipment - grandTotalBills;
+
+            document.getElementById('totalMoney').textContent = grandTotalMoney.toLocaleString();
+            document.getElementById('totalXP').textContent = grandTotalXP.toLocaleString();
+            document.getElementById('totalEquipment').textContent = grandTotalEquipment.toLocaleString();
+            document.getElementById('totalBills').textContent = grandTotalBills.toLocaleString();
+            document.getElementById('totalNetProfit').textContent = grandNetProfit.toLocaleString();
+        }
+
+        function resetCalculator() {
+            const inputs = document.querySelectorAll('.quantity-input, .equipment-price, .equipment-count, .bills-price');
+            inputs.forEach(input => {
+                input.value = 0;
+            });
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            const equipInputs = document.querySelectorAll('.equipment-inputs, .bills-inputs');
+            equipInputs.forEach(input => {
+                input.classList.remove('active');
+            });
+            
+            // Hide all individual results
+            const results = document.querySelectorAll('.job-result');
+            results.forEach(result => {
+                result.classList.remove('active');
+            });
+            
+            calculateGrandTotals();
+        }
+
+        // ==================== CLOCK SYSTEM ====================
+        let referenceGameMinutes = 0;
+        let referenceRealTime = 0;
+        let conversionRatio = 0;
+        let clockInterval = null;
+        let realTimeInterval = null;
+        let portStateOverride = null;
+        let lastHour = -1;
 
         function parseTime(timeStr, period) {
             const parts = timeStr.split(':').map(p => p.trim());
@@ -2174,179 +2386,6 @@
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('clockSection').classList.remove('active');
             document.body.classList.remove('port-closed', 'port-warning');
-        }
-
-        // Calculator functionality with equipment
-        function toggleEquipment(jobName) {
-            const checkbox = document.getElementById(`equip-${jobName}`);
-            const inputs = document.getElementById(`equip-inputs-${jobName}`);
-            
-            if (checkbox.checked) {
-                inputs.classList.add('active');
-            } else {
-                inputs.classList.remove('active');
-            }
-        }
-
-        function getEquipmentCost(jobName) {
-            const checkbox = document.getElementById(`equip-${jobName}`);
-            if (!checkbox || !checkbox.checked) {
-                return 0;
-            }
-
-            const priceInput = document.querySelector(`input.equipment-price[data-equip-job="${jobName}"]`);
-            const countInput = document.querySelector(`input.equipment-count[data-equip-job="${jobName}"]`);
-            
-            const price = parseFloat(priceInput?.value) || 0;
-            const count = parseFloat(countInput?.value) || 0;
-            
-            return price * count;
-        }
-
-        function calculateJob(inputElement) {
-            const quantity = parseInt(inputElement.value) || 0;
-            const money = parseFloat(inputElement.dataset.money) || 0;
-            const xp = parseFloat(inputElement.dataset.xp) || 0;
-            const jobName = inputElement.dataset.job;
-
-            const totalMoney = quantity * money;
-            const totalXP = quantity * xp;
-            const equipmentCost = getEquipmentCost(jobName);
-            const netProfit = totalMoney - equipmentCost;
-
-            // Update individual job result
-            const resultDiv = document.getElementById(`result-${jobName}`);
-            const moneyDisplay = document.getElementById(`money-${jobName}`);
-            const xpDisplay = document.getElementById(`xp-${jobName}`);
-            const equipCostDiv = document.getElementById(`equip-cost-${jobName}`);
-            const equipValueDisplay = document.getElementById(`equip-value-${jobName}`);
-            const netProfitDiv = document.getElementById(`net-profit-${jobName}`);
-            const netValueDisplay = document.getElementById(`net-value-${jobName}`);
-
-            if (quantity > 0) {
-                resultDiv.classList.add('active');
-                moneyDisplay.textContent = totalMoney.toLocaleString();
-                xpDisplay.textContent = totalXP.toLocaleString();
-                
-                if (equipmentCost > 0) {
-                    equipCostDiv.style.display = 'block';
-                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
-                    netProfitDiv.style.display = 'block';
-                    netValueDisplay.textContent = netProfit.toLocaleString();
-                } else {
-                    equipCostDiv.style.display = 'none';
-                    netProfitDiv.style.display = 'none';
-                }
-            } else {
-                resultDiv.classList.remove('active');
-            }
-
-            // Update grand totals
-            calculateGrandTotals();
-        }
-
-        function calculateMinerals() {
-            let totalMineralMoney = 0;
-            let totalMineralXP = 0;
-
-            // Get all mineral inputs
-            const mineralInputs = document.querySelectorAll('input[data-job="mineral"]');
-            
-            mineralInputs.forEach(input => {
-                const quantity = parseInt(input.value) || 0;
-                const money = parseFloat(input.dataset.money) || 0;
-                const xp = parseFloat(input.dataset.xp) || 0;
-
-                totalMineralMoney += quantity * money;
-                totalMineralXP += quantity * xp;
-            });
-
-            const equipmentCost = getEquipmentCost('mineral');
-            const netProfit = totalMineralMoney - equipmentCost;
-
-            // Update combined minerals result
-            const resultDiv = document.getElementById('result-minerals');
-            const moneyDisplay = document.getElementById('money-minerals');
-            const xpDisplay = document.getElementById('xp-minerals');
-            const equipCostDiv = document.getElementById('equip-cost-mineral');
-            const equipValueDisplay = document.getElementById('equip-value-mineral');
-            const netProfitDiv = document.getElementById('net-profit-mineral');
-            const netValueDisplay = document.getElementById('net-value-mineral');
-
-            if (totalMineralMoney > 0 || totalMineralXP > 0) {
-                resultDiv.classList.add('active');
-                moneyDisplay.textContent = totalMineralMoney.toLocaleString();
-                xpDisplay.textContent = totalMineralXP.toLocaleString();
-                
-                if (equipmentCost > 0) {
-                    equipCostDiv.style.display = 'block';
-                    equipValueDisplay.textContent = equipmentCost.toLocaleString();
-                    netProfitDiv.style.display = 'block';
-                    netValueDisplay.textContent = netProfit.toLocaleString();
-                } else {
-                    equipCostDiv.style.display = 'none';
-                    netProfitDiv.style.display = 'none';
-                }
-            } else {
-                resultDiv.classList.remove('active');
-            }
-
-            // Update grand totals
-            calculateGrandTotals();
-        }
-
-        function calculateGrandTotals() {
-            let grandTotalMoney = 0;
-            let grandTotalXP = 0;
-            let grandTotalEquipment = 0;
-
-            const inputs = document.querySelectorAll('.quantity-input');
-            inputs.forEach(input => {
-                const quantity = parseInt(input.value) || 0;
-                const money = parseFloat(input.dataset.money) || 0;
-                const xp = parseFloat(input.dataset.xp) || 0;
-
-                grandTotalMoney += quantity * money;
-                grandTotalXP += quantity * xp;
-            });
-
-            // Calculate total equipment costs
-            const jobNames = ['port', 'farm', 'poultry', 'wood', 'fish', 'fabric', 'oil', 'mineral'];
-            jobNames.forEach(job => {
-                grandTotalEquipment += getEquipmentCost(job);
-            });
-
-            const grandNetProfit = grandTotalMoney - grandTotalEquipment;
-
-            document.getElementById('totalMoney').textContent = grandTotalMoney.toLocaleString();
-            document.getElementById('totalXP').textContent = grandTotalXP.toLocaleString();
-            document.getElementById('totalEquipment').textContent = grandTotalEquipment.toLocaleString();
-            document.getElementById('totalNetProfit').textContent = grandNetProfit.toLocaleString();
-        }
-
-        function resetCalculator() {
-            const inputs = document.querySelectorAll('.quantity-input, .equipment-price, .equipment-count');
-            inputs.forEach(input => {
-                input.value = 0;
-            });
-            
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-
-            const equipInputs = document.querySelectorAll('.equipment-inputs');
-            equipInputs.forEach(input => {
-                input.classList.remove('active');
-            });
-            
-            // Hide all individual results
-            const results = document.querySelectorAll('.job-result');
-            results.forEach(result => {
-                result.classList.remove('active');
-            });
-            
-            calculateGrandTotals();
         }
 
         document.addEventListener('visibilitychange', function() {
