@@ -1717,70 +1717,236 @@
     </main>
 
     <script>
-        // ==================== LEVELING SYSTEM (UPDATED WITH NEW RP PATTERN) ====================
+        // ==================== LEVELING SYSTEM (UPDATED WITH EXACT RP TABLE) ====================
         
-        // Updated RP calculation matching your exact progression table
+        // Exact RP table from your data
+        const RP_TABLE = [
+            { rank: 1, totalRP: 0, rpToNext: 800 },
+            { rank: 2, totalRP: 800, rpToNext: 1300 },
+            { rank: 3, totalRP: 2100, rpToNext: 1700 },
+            { rank: 4, totalRP: 3800, rpToNext: 2300 },
+            { rank: 5, totalRP: 6100, rpToNext: 3400 },
+            { rank: 6, totalRP: 9500, rpToNext: 3000 },
+            { rank: 7, totalRP: 12500, rpToNext: 3500 },
+            { rank: 8, totalRP: 16000, rpToNext: 3800 },
+            { rank: 9, totalRP: 19800, rpToNext: 4200 },
+            { rank: 10, totalRP: 24000, rpToNext: 4500 },
+            { rank: 11, totalRP: 28500, rpToNext: 4900 },
+            { rank: 12, totalRP: 33400, rpToNext: 5300 },
+            { rank: 13, totalRP: 38700, rpToNext: 5500 },
+            { rank: 14, totalRP: 44200, rpToNext: 6000 },
+            { rank: 15, totalRP: 50200, rpToNext: 6200 },
+            { rank: 16, totalRP: 56400, rpToNext: 6600 },
+            { rank: 17, totalRP: 63000, rpToNext: 6900 },
+            { rank: 18, totalRP: 69900, rpToNext: 7200 },
+            { rank: 19, totalRP: 77100, rpToNext: 7600 },
+            { rank: 20, totalRP: 84700, rpToNext: 7800 },
+            { rank: 21, totalRP: 92500, rpToNext: 8200 },
+            { rank: 22, totalRP: 100700, rpToNext: 8500 },
+            { rank: 23, totalRP: 109200, rpToNext: 8800 },
+            { rank: 24, totalRP: 118000, rpToNext: 9100 },
+            { rank: 25, totalRP: 127100, rpToNext: 9400 },
+            { rank: 26, totalRP: 136500, rpToNext: 9700 },
+            { rank: 27, totalRP: 146200, rpToNext: 10000 },
+            { rank: 28, totalRP: 156200, rpToNext: 10300 },
+            { rank: 29, totalRP: 166500, rpToNext: 10600 },
+            { rank: 30, totalRP: 177100, rpToNext: 10900 },
+            { rank: 31, totalRP: 188000, rpToNext: 11200 },
+            { rank: 32, totalRP: 199200, rpToNext: 11500 },
+            { rank: 33, totalRP: 210700, rpToNext: 11700 },
+            { rank: 34, totalRP: 222400, rpToNext: 12100 },
+            { rank: 35, totalRP: 234500, rpToNext: 12300 },
+            { rank: 36, totalRP: 246800, rpToNext: 12600 },
+            { rank: 37, totalRP: 259400, rpToNext: 12900 },
+            { rank: 38, totalRP: 272300, rpToNext: 13200 },
+            { rank: 39, totalRP: 285500, rpToNext: 13500 },
+            { rank: 40, totalRP: 299000, rpToNext: 13700 },
+            { rank: 41, totalRP: 312700, rpToNext: 14100 },
+            { rank: 42, totalRP: 326800, rpToNext: 14200 },
+            { rank: 43, totalRP: 341000, rpToNext: 14600 },
+            { rank: 44, totalRP: 355600, rpToNext: 14900 },
+            { rank: 45, totalRP: 370500, rpToNext: 15100 },
+            { rank: 46, totalRP: 385600, rpToNext: 15400 },
+            { rank: 47, totalRP: 401000, rpToNext: 15600 },
+            { rank: 48, totalRP: 416600, rpToNext: 16000 },
+            { rank: 49, totalRP: 432600, rpToNext: 16200 },
+            { rank: 50, totalRP: 448800, rpToNext: 16400 },
+            { rank: 51, totalRP: 465200, rpToNext: 16800 },
+            { rank: 52, totalRP: 482000, rpToNext: 17000 },
+            { rank: 53, totalRP: 499000, rpToNext: 17300 },
+            { rank: 54, totalRP: 516300, rpToNext: 17500 },
+            { rank: 55, totalRP: 533800, rpToNext: 17800 },
+            { rank: 56, totalRP: 551600, rpToNext: 18000 },
+            { rank: 57, totalRP: 569600, rpToNext: 18400 },
+            { rank: 58, totalRP: 588000, rpToNext: 18500 },
+            { rank: 59, totalRP: 606500, rpToNext: 18900 },
+            { rank: 60, totalRP: 625400, rpToNext: 19100 },
+            { rank: 61, totalRP: 644500, rpToNext: 19300 },
+            { rank: 62, totalRP: 663800, rpToNext: 19600 },
+            { rank: 63, totalRP: 683400, rpToNext: 19900 },
+            { rank: 64, totalRP: 703300, rpToNext: 20100 },
+            { rank: 65, totalRP: 723400, rpToNext: 20400 },
+            { rank: 66, totalRP: 743800, rpToNext: 20700 },
+            { rank: 67, totalRP: 764500, rpToNext: 20900 },
+            { rank: 68, totalRP: 785400, rpToNext: 21100 },
+            { rank: 69, totalRP: 806500, rpToNext: 21400 },
+            { rank: 70, totalRP: 827900, rpToNext: 21700 },
+            { rank: 71, totalRP: 849600, rpToNext: 21900 },
+            { rank: 72, totalRP: 871500, rpToNext: 22100 },
+            { rank: 73, totalRP: 893600, rpToNext: 22400 },
+            { rank: 74, totalRP: 916000, rpToNext: 22700 },
+            { rank: 75, totalRP: 938700, rpToNext: 22900 },
+            { rank: 76, totalRP: 961600, rpToNext: 23100 },
+            { rank: 77, totalRP: 984700, rpToNext: 23400 },
+            { rank: 78, totalRP: 1008100, rpToNext: 23700 },
+            { rank: 79, totalRP: 1031800, rpToNext: 23900 },
+            { rank: 80, totalRP: 1055700, rpToNext: 24100 },
+            { rank: 81, totalRP: 1079800, rpToNext: 24400 },
+            { rank: 82, totalRP: 1104200, rpToNext: 24600 },
+            { rank: 83, totalRP: 1128800, rpToNext: 24900 },
+            { rank: 84, totalRP: 1153700, rpToNext: 25100 },
+            { rank: 85, totalRP: 1178800, rpToNext: 25400 },
+            { rank: 86, totalRP: 1204200, rpToNext: 25600 },
+            { rank: 87, totalRP: 1229800, rpToNext: 25800 },
+            { rank: 88, totalRP: 1255600, rpToNext: 26100 },
+            { rank: 89, totalRP: 1281700, rpToNext: 26400 },
+            { rank: 90, totalRP: 1308100, rpToNext: 26500 },
+            { rank: 91, totalRP: 1334600, rpToNext: 26800 },
+            { rank: 92, totalRP: 1361400, rpToNext: 27100 },
+            { rank: 93, totalRP: 1388500, rpToNext: 27300 },
+            { rank: 94, totalRP: 1415800, rpToNext: 27500 },
+            { rank: 95, totalRP: 1443300, rpToNext: 27800 },
+            { rank: 96, totalRP: 1471100, rpToNext: 28000 },
+            { rank: 97, totalRP: 1499100, rpToNext: 28200 },
+            { rank: 98, totalRP: 1527300, rpToNext: 28500 },
+            { rank: 99, totalRP: 1555800, rpToNext: 28550 },
+            { rank: 100, totalRP: 1584350, rpToNext: 28600 },
+            { rank: 101, totalRP: 1612950, rpToNext: 28650 },
+            { rank: 102, totalRP: 1641600, rpToNext: 28700 },
+            { rank: 103, totalRP: 1670300, rpToNext: 28750 },
+            { rank: 104, totalRP: 1699050, rpToNext: 28800 },
+            { rank: 105, totalRP: 1727850, rpToNext: 28850 },
+            { rank: 106, totalRP: 1756700, rpToNext: 28900 },
+            { rank: 107, totalRP: 1785600, rpToNext: 28950 },
+            { rank: 108, totalRP: 1814550, rpToNext: 29000 },
+            { rank: 109, totalRP: 1843550, rpToNext: 29050 },
+            { rank: 110, totalRP: 1872600, rpToNext: 29100 },
+            { rank: 111, totalRP: 1901700, rpToNext: 29150 },
+            { rank: 112, totalRP: 1930850, rpToNext: 29200 },
+            { rank: 113, totalRP: 1960050, rpToNext: 29250 },
+            { rank: 114, totalRP: 1989300, rpToNext: 29300 },
+            { rank: 115, totalRP: 2018600, rpToNext: 29350 },
+            { rank: 116, totalRP: 2047950, rpToNext: 29400 },
+            { rank: 117, totalRP: 2077350, rpToNext: 29450 },
+            { rank: 118, totalRP: 2106800, rpToNext: 29500 },
+            { rank: 119, totalRP: 2136300, rpToNext: 29550 },
+            { rank: 120, totalRP: 2165850, rpToNext: 29600 },
+            { rank: 121, totalRP: 2195450, rpToNext: 29650 },
+            { rank: 122, totalRP: 2225100, rpToNext: 29700 },
+            { rank: 123, totalRP: 2254800, rpToNext: 29750 },
+            { rank: 124, totalRP: 2284550, rpToNext: 29800 },
+            { rank: 125, totalRP: 2314350, rpToNext: 29850 },
+            { rank: 126, totalRP: 2344200, rpToNext: 29900 },
+            { rank: 127, totalRP: 2374100, rpToNext: 29950 },
+            { rank: 128, totalRP: 2404050, rpToNext: 30000 },
+            { rank: 129, totalRP: 2434050, rpToNext: 30050 },
+            { rank: 130, totalRP: 2464100, rpToNext: 30100 },
+            { rank: 131, totalRP: 2494200, rpToNext: 30150 },
+            { rank: 132, totalRP: 2524350, rpToNext: 30200 },
+            { rank: 133, totalRP: 2554550, rpToNext: 30250 },
+            { rank: 134, totalRP: 2584800, rpToNext: 30300 },
+            { rank: 135, totalRP: 2615100, rpToNext: 30350 },
+            { rank: 136, totalRP: 2645450, rpToNext: 30400 },
+            { rank: 137, totalRP: 2675850, rpToNext: 30450 },
+            { rank: 138, totalRP: 2706300, rpToNext: 30500 },
+            { rank: 139, totalRP: 2736800, rpToNext: 30550 },
+            { rank: 140, totalRP: 2767350, rpToNext: 30600 },
+            { rank: 141, totalRP: 2797950, rpToNext: 30650 },
+            { rank: 142, totalRP: 2828600, rpToNext: 30700 },
+            { rank: 143, totalRP: 2859300, rpToNext: 30750 },
+            { rank: 144, totalRP: 2890050, rpToNext: 30800 },
+            { rank: 145, totalRP: 2920850, rpToNext: 30850 },
+            { rank: 146, totalRP: 2951700, rpToNext: 30900 },
+            { rank: 147, totalRP: 2982600, rpToNext: 30950 },
+            { rank: 148, totalRP: 3013550, rpToNext: 31000 },
+            { rank: 149, totalRP: 3044550, rpToNext: 31050 },
+            { rank: 150, totalRP: 3075600, rpToNext: 31100 },
+            { rank: 151, totalRP: 3106700, rpToNext: 31150 },
+            { rank: 152, totalRP: 3137850, rpToNext: 31200 },
+            { rank: 153, totalRP: 3169050, rpToNext: 31250 },
+            { rank: 154, totalRP: 3200300, rpToNext: 31300 },
+            { rank: 155, totalRP: 3231600, rpToNext: 31350 },
+            { rank: 156, totalRP: 3262950, rpToNext: 31400 },
+            { rank: 157, totalRP: 3294350, rpToNext: 31450 },
+            { rank: 158, totalRP: 3325800, rpToNext: 31500 },
+            { rank: 159, totalRP: 3357300, rpToNext: 31550 },
+            { rank: 160, totalRP: 3388850, rpToNext: 31600 },
+            { rank: 161, totalRP: 3420450, rpToNext: 31650 },
+            { rank: 162, totalRP: 3452100, rpToNext: 31700 },
+            { rank: 163, totalRP: 3483800, rpToNext: 31750 },
+            { rank: 164, totalRP: 3515550, rpToNext: 31800 },
+            { rank: 165, totalRP: 3547350, rpToNext: 31850 },
+            { rank: 166, totalRP: 3579200, rpToNext: 31900 },
+            { rank: 167, totalRP: 3611100, rpToNext: 31950 },
+            { rank: 168, totalRP: 3643050, rpToNext: 32000 },
+            { rank: 169, totalRP: 3675050, rpToNext: 32050 },
+            { rank: 170, totalRP: 3707100, rpToNext: 32100 },
+            { rank: 171, totalRP: 3739200, rpToNext: 32150 },
+            { rank: 172, totalRP: 3771350, rpToNext: 32200 },
+            { rank: 173, totalRP: 3803550, rpToNext: 32250 },
+            { rank: 174, totalRP: 3835800, rpToNext: 32300 },
+            { rank: 175, totalRP: 3868100, rpToNext: 32350 },
+            { rank: 176, totalRP: 3900450, rpToNext: 32400 },
+            { rank: 177, totalRP: 3932850, rpToNext: 32450 },
+            { rank: 178, totalRP: 3965300, rpToNext: 32500 },
+            { rank: 179, totalRP: 3997800, rpToNext: 32550 },
+            { rank: 180, totalRP: 4030350, rpToNext: 32600 },
+            { rank: 181, totalRP: 4062950, rpToNext: 32650 },
+            { rank: 182, totalRP: 4095600, rpToNext: 32700 },
+            { rank: 183, totalRP: 4128300, rpToNext: 32750 },
+            { rank: 184, totalRP: 4161050, rpToNext: 32800 },
+            { rank: 185, totalRP: 4193850, rpToNext: 32850 },
+            { rank: 186, totalRP: 4226700, rpToNext: 32900 },
+            { rank: 187, totalRP: 4259600, rpToNext: 32950 },
+            { rank: 188, totalRP: 4292550, rpToNext: 33000 },
+            { rank: 189, totalRP: 4325550, rpToNext: 33050 },
+            { rank: 190, totalRP: 4358600, rpToNext: 33100 },
+            { rank: 191, totalRP: 4391700, rpToNext: 33150 },
+            { rank: 192, totalRP: 4424850, rpToNext: 33200 },
+            { rank: 193, totalRP: 4458050, rpToNext: 33250 },
+            { rank: 194, totalRP: 4491300, rpToNext: 33300 },
+            { rank: 195, totalRP: 4524600, rpToNext: 33350 },
+            { rank: 196, totalRP: 4557950, rpToNext: 33400 },
+            { rank: 197, totalRP: 4591350, rpToNext: 33450 },
+            { rank: 198, totalRP: 4624800, rpToNext: 33500 },
+            { rank: 199, totalRP: 4658300, rpToNext: 33550 },
+            { rank: 200, totalRP: 4691850, rpToNext: 33600 }
+        ];
+
         function calculateRPForLevel(level) {
             if (level < 1) return 0;
+            if (level > 200) level = 200;
             
-            let totalRP = 0;
-            
-            for (let i = 1; i <= level; i++) {
-                if (i === 1) {
-                    totalRP += 800;
-                } else if (i === 2) {
-                    totalRP += 1300;
-                } else if (i === 3) {
-                    totalRP += 1700;
-                } else if (i === 4) {
-                    totalRP += 2300;
-                } else if (i === 5) {
-                    totalRP += 3400;
-                } else if (i === 6) {
-                    totalRP += 3000;
-                } else if (i === 7) {
-                    totalRP += 3500;
-                } else if (i === 8) {
-                    totalRP += 3800;
-                } else if (i === 9) {
-                    totalRP += 4200;
-                } else if (i === 10) {
-                    totalRP += 4500;
-                } else if (i <= 99) {
-                    // For levels 11-99, gradual increment (simplified estimate)
-                    totalRP += 4500 + (i - 10) * 100;
-                } else {
-                    // For levels 100+, increment by 50 RP per level
-                    totalRP += 28600 + (i - 100) * 50;
-                }
-            }
-            
-            return totalRP;
+            const levelData = RP_TABLE[level - 1];
+            return levelData ? levelData.totalRP : 0;
         }
 
         function getRPToNextLevel(level) {
-            if (level < 1) return 0;
-            if (level === 1) return 800;
-            if (level === 2) return 1300;
-            if (level === 3) return 1700;
-            if (level === 4) return 2300;
-            if (level === 5) return 3400;
-            if (level === 6) return 3000;
-            if (level === 7) return 3500;
-            if (level === 8) return 3800;
-            if (level === 9) return 4200;
-            if (level === 10) return 4500;
-            if (level <= 99) return 4500 + (level - 10) * 100;
-            return 28600 + (level - 100) * 50;
+            if (level < 1 || level > 200) return 0;
+            
+            const levelData = RP_TABLE[level - 1];
+            return levelData ? levelData.rpToNext : 0;
         }
 
         function findLevelFromRP(currentRP) {
-            for (let level = 1; level <= 200; level++) {
-                let rpForLevel = calculateRPForLevel(level);
-                let rpForNextLevel = calculateRPForLevel(level + 1);
+            for (let i = 0; i < RP_TABLE.length; i++) {
+                const current = RP_TABLE[i];
+                const next = RP_TABLE[i + 1];
                 
-                if (currentRP >= rpForLevel && currentRP < rpForNextLevel) {
-                    return level;
+                if (!next) return 200; // Max level
+                
+                if (currentRP >= current.totalRP && currentRP < next.totalRP) {
+                    return current.rank;
                 }
             }
             return 200; // Max level
@@ -2226,194 +2392,218 @@
             body.classList.remove('port-closed', 'port-warning');
             clockDisplay.classList.remove('port-closed', 'port-warning');
 
-            if (portStateOverride === true) {
-                portStatus.textContent = '🟢 الميناء مفتوح';
-                portCountdown.style.display = 'none';
-            } else if (portStateOverride === false) {
-                body.classList.add('port-closed');
-                clockDisplay.classList.add('port-closed');
-                portStatus.textContent = '🔴 الميناء مغلق';
-                portCountdown.style.display = 'none';
+            if (portStateOverride !== null) {
+                if (portStateOverride) {
+                    portStatus.textContent = 'الميناء مفتوح (Manual Override)';
+                    body.classList.remove('port-closed', 'port-warning');
+                    clockDisplay.classList.remove('port-closed', 'port-warning');
+                } else {
+                    portStatus.textContent = 'الميناء مغلق (Manual Override)';
+                    body.classList.add('port-closed');
+                    clockDisplay.classList.add('port-closed');
+                }
+                portCountdown.textContent = 'Manual override active. Click toggle button to change state.';
             }
         }
 
-        function updatePortStatus(hours24, totalMinutes) {
-            if (portStateOverride !== null) {
-                if (lastHour !== -1 && lastHour !== hours24) {
-                    if (hours24 === 7 || hours24 === 19) {
-                        portStateOverride = !portStateOverride;
+        function updateClock() {
+            const now = Date.now();
+            const elapsedRealMinutes = (now - referenceRealTime) / 60000;
+            const elapsedGameMinutes = elapsedRealMinutes * conversionRatio;
+            const currentGameMinutes = referenceGameMinutes + elapsedGameMinutes;
+
+            const gameTime = formatGameTime(currentGameMinutes);
+            const currentHour = gameTime.hours24;
+
+            document.getElementById('gameTime').textContent = gameTime.time;
+            document.getElementById('gamePeriod').textContent = gameTime.period;
+
+            // Only update port status if not in manual override
+            if (portStateOverride === null) {
+                const isPortOpen = currentHour >= 7 && currentHour < 19;
+                const clockDisplay = document.getElementById('clockDisplay');
+                const portStatus = document.getElementById('portStatus');
+                const portCountdown = document.getElementById('portCountdown');
+                const body = document.body;
+
+                body.classList.remove('port-closed', 'port-warning');
+                clockDisplay.classList.remove('port-closed', 'port-warning');
+
+                if (isPortOpen) {
+                    const minutesUntilClose = (19 - currentHour) * 60 - (currentGameMinutes % 60);
+
+                    if (minutesUntilClose <= 60) {
+                        body.classList.add('port-warning');
+                        clockDisplay.classList.add('port-warning');
+                        portStatus.textContent = '⚠️ الميناء سيغلق قريباً!';
+                    } else {
+                        portStatus.textContent = '✅ الميناء مفتوح';
+                    }
+
+                    const changeInfo = calculatePortChangeTime(currentGameMinutes, true);
+                    portCountdown.innerHTML = `
+                        سيغلق الميناء بعد: <strong>${formatCountdownTime(changeInfo.realMinutes)}</strong><br>
+                        وقت الإغلاق: <strong>${formatRealTime(changeInfo.changeTime)}</strong>
+                    `;
+                } else {
+                    body.classList.add('port-closed');
+                    clockDisplay.classList.add('port-closed');
+                    portStatus.textContent = '❌ الميناء مغلق';
+
+                    const changeInfo = calculatePortChangeTime(currentGameMinutes, false);
+                    portCountdown.innerHTML = `
+                        سيفتح الميناء بعد: <strong>${formatCountdownTime(changeInfo.realMinutes)}</strong><br>
+                        وقت الفتح: <strong>${formatRealTime(changeInfo.changeTime)}</strong>
+                    `;
+                }
+
+                // Check for hour change
+                if (lastHour !== -1 && lastHour !== currentHour) {
+                    if (currentHour === 7) {
+                        showNotification('✅ الميناء مفتوح الآن!', 'success');
+                    } else if (currentHour === 19) {
+                        showNotification('❌ الميناء مغلق الآن!', 'closed');
+                    } else if (currentHour === 18) {
+                        showNotification('⚠️ الميناء سيغلق خلال ساعة!', 'warning');
                     }
                 }
-                lastHour = hours24;
-                updatePortStatusManual();
-                return;
-            }
 
-            lastHour = hours24;
-
-            const clockDisplay = document.getElementById('clockDisplay');
-            const portStatus = document.getElementById('portStatus');
-            const portCountdown = document.getElementById('portCountdown');
-            const body = document.body;
-
-            const isPortClosed = hours24 >= 19 || hours24 < 7;
-            
-            const totalMinutesIn24 = hours24 * 60 + (totalMinutes % 60);
-            const isClosingWarning = totalMinutesIn24 >= (18 * 60 + 45) && totalMinutesIn24 < (19 * 60);
-            const isOpeningWarning = totalMinutesIn24 >= (6 * 60 + 45) && totalMinutesIn24 < (7 * 60);
-
-            body.classList.remove('port-closed', 'port-warning');
-            clockDisplay.classList.remove('port-closed', 'port-warning');
-
-            if (isOpeningWarning) {
-                body.classList.add('port-warning');
-                clockDisplay.classList.add('port-warning');
-                portStatus.textContent = '⚠️ الميناء يفتح قريباً';
-
-                const timeInfo = calculatePortChangeTime(totalMinutes, false);
-                if (timeInfo) {
-                    const countdown = formatCountdownTime(timeInfo.realMinutes);
-                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⚠️ OPENING SOON!<br>⏰ Opens After: ${countdown}<br>🕐 Opening Time(Real Time): ${changeTimeStr}`;
-                    portCountdown.style.display = 'block';
-                }
-            } else if (isClosingWarning) {
-                body.classList.add('port-warning');
-                clockDisplay.classList.add('port-warning');
-                portStatus.textContent = '⚠️ الميناء يغلق قريباً';
-
-                const timeInfo = calculatePortChangeTime(totalMinutes, true);
-                if (timeInfo) {
-                    const countdown = formatCountdownTime(timeInfo.realMinutes);
-                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⚠️ CLOSING SOON!<br>⏰ Closes After: ${countdown}<br>🕐 Closing Time(Real Time): ${changeTimeStr}`;
-                    portCountdown.style.display = 'block';
-                }
-            } else if (isPortClosed) {
-                body.classList.add('port-closed');
-                clockDisplay.classList.add('port-closed');
-                portStatus.textContent = '🔴 الميناء مغلق';
-
-                const timeInfo = calculatePortChangeTime(totalMinutes, false);
-                if (timeInfo) {
-                    const countdown = formatCountdownTime(timeInfo.realMinutes);
-                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⏰ Opens After(Real Time): ${countdown}<br>🕐 Opening Time (Real Time): ${changeTimeStr}`;
-                    portCountdown.style.display = 'block';
-                }
-            } else {
-                portStatus.textContent = '🟢 الميناء مفتوح';
-
-                const timeInfo = calculatePortChangeTime(totalMinutes, true);
-                if (timeInfo) {
-                    const countdown = formatCountdownTime(timeInfo.realMinutes);
-                    const changeTimeStr = formatRealTime(timeInfo.changeTime);
-                    portCountdown.innerHTML = `⏰ Closes After: ${countdown}<br>🕐 Closing Time(Real Time): ${changeTimeStr}`;
-                    portCountdown.style.display = 'block';
-                }
+                lastHour = currentHour;
             }
         }
 
-        function formatElapsedTime(milliseconds) {
-            const totalSeconds = Math.floor(milliseconds / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 20px 30px;
+                border-radius: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                color: white;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            `;
 
-            if (hours > 0) {
-                return `${hours}h ${minutes}m ${seconds}s`;
-            } else if (minutes > 0) {
-                return `${minutes}m ${seconds}s`;
-            } else {
-                return `${seconds}s`;
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+            } else if (type === 'closed') {
+                notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+            } else if (type === 'warning') {
+                notification.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)';
             }
-        }
 
-        function startClock() {
-            const timeInput = document.getElementById('referenceTime').value;
-            const dayHours = parseFloat(document.getElementById('gameDayHours').value);
-            const period = document.querySelector('input[name="timePeriod"]:checked').value;
+            notification.textContent = message;
+            document.body.appendChild(notification);
 
-            if (!timeInput || !dayHours || dayHours <= 0) {
-                alert('Please enter valid values for both fields');
-                return;
-            }
-
-            try {
-                conversionRatio = 24 / dayHours;
-                referenceGameMinutes = parseTime(timeInput, period);
-                referenceRealTime = Date.now();
-
-                const startDate = new Date();
-                document.getElementById('startTime').textContent = formatRealTime(startDate);
-
-                const realMinPerGameHour = 60 / conversionRatio;
-
-                document.getElementById('conversionInfo').innerHTML = `
-                    <strong>⚡ Speed:</strong> 1 real minute = ${conversionRatio.toFixed(4)} game minutes<br>
-                    <strong>🔄 Ratio:</strong> 1 real hour = ${conversionRatio.toFixed(2)} game hours<br>
-                    <strong>⏱️ Duration:</strong> 1 game hour = ${realMinPerGameHour.toFixed(2)} real minutes<br>
-                    <strong>🌍 Full Day:</strong> ${dayHours} real hours = 24 game hours<br>
-                    <strong>🚢 Port Hours:</strong> Open 7 AM - 7 PM, Closed 7 PM - 7 AM
-                `;
-
-                document.getElementById('setupSection').classList.add('hidden');
-                document.getElementById('clockSection').classList.add('active');
-
-                if (clockInterval) clearInterval(clockInterval);
-                if (realTimeInterval) clearInterval(realTimeInterval);
-
-                clockInterval = setInterval(updateGameTime, 100);
-                realTimeInterval = setInterval(updateRealTime, 1000);
-
-                updateGameTime();
-                updateRealTime();
-            } catch (error) {
-                alert('Please enter a valid time (HH:MM format, hours between 1-12)');
-            }
-        }
-
-        function updateGameTime() {
-            const realMinutesPassed = (Date.now() - referenceRealTime) / (1000 * 60);
-            const gameMinutesPassed = realMinutesPassed * conversionRatio;
-            const currentGameMinutes = referenceGameMinutes + gameMinutesPassed;
-
-            const formattedTime = formatGameTime(currentGameMinutes);
-            document.getElementById('gameTime').textContent = formattedTime.time;
-            document.getElementById('gamePeriod').textContent = formattedTime.period;
-
-            updatePortStatus(formattedTime.hours24, formattedTime.totalMinutes);
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
         }
 
         function updateRealTime() {
             const now = new Date();
             document.getElementById('realTime').textContent = formatRealTime(now);
 
-            const elapsed = Date.now() - referenceRealTime;
-            document.getElementById('elapsedTime').textContent = formatElapsedTime(elapsed);
+            const elapsed = Math.floor((now - referenceRealTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('elapsedTime').textContent = `${minutes}m ${seconds}s`;
+        }
+
+        function startClock() {
+            const timeInput = document.getElementById('referenceTime').value.trim();
+            const period = document.querySelector('input[name="timePeriod"]:checked').value;
+            const gameDayHours = parseFloat(document.getElementById('gameDayHours').value);
+
+            if (!timeInput) {
+                alert('⚠️ Please enter a game time!');
+                return;
+            }
+
+            if (!gameDayHours || gameDayHours <= 0) {
+                alert('⚠️ Please enter a valid game day duration!');
+                return;
+            }
+
+            try {
+                referenceGameMinutes = parseTime(timeInput, period);
+                referenceRealTime = Date.now();
+                conversionRatio = (24 * 60) / (gameDayHours * 60);
+                portStateOverride = null;
+                lastHour = -1;
+
+                document.getElementById('setupSection').classList.add('hidden');
+                document.getElementById('clockSection').classList.add('active');
+                document.getElementById('startTime').textContent = formatRealTime(new Date(referenceRealTime));
+
+                const oneRealMinute = 60 / conversionRatio;
+                const oneGameHour = 60 / conversionRatio;
+
+                document.getElementById('conversionInfo').innerHTML = `
+                    <strong>⏱️ Conversion Rate:</strong> ${conversionRatio.toFixed(4)} game minutes per real minute<br>
+                    <strong>📊 1 real minute =</strong> ${oneRealMinute.toFixed(2)} game minutes<br>
+                    <strong>🕐 1 game hour =</strong> ${oneGameHour.toFixed(2)} real minutes (${(oneGameHour / 60).toFixed(2)} real hours)<br>
+                    <strong>🌍 Full game day =</strong> ${gameDayHours} real hours
+                `;
+
+                updateClock();
+                updateRealTime();
+
+                if (clockInterval) clearInterval(clockInterval);
+                if (realTimeInterval) clearInterval(realTimeInterval);
+
+                clockInterval = setInterval(updateClock, 100);
+                realTimeInterval = setInterval(updateRealTime, 1000);
+
+                // Reset toggle button
+                const toggleBtn = document.getElementById('togglePortBtn');
+                toggleBtn.classList.remove('active');
+                toggleBtn.textContent = '🔄 Toggle Port State (Manual Override)';
+
+            } catch (error) {
+                alert('⚠️ Invalid time format! Use HH:MM (e.g., 3:00 or 8:45)');
+            }
         }
 
         function changeSettings() {
             if (clockInterval) clearInterval(clockInterval);
             if (realTimeInterval) clearInterval(realTimeInterval);
 
-            portStateOverride = null;
-            lastHour = -1;
-            const toggleBtn = document.getElementById('togglePortBtn');
-            toggleBtn.classList.remove('active');
-            toggleBtn.textContent = '🔄 Toggle Port State (Manual Override)';
-
-            document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('clockSection').classList.remove('active');
-            document.body.classList.remove('port-closed', 'port-warning');
+            document.getElementById('setupSection').classList.remove('hidden');
+
+            const body = document.body;
+            body.classList.remove('port-closed', 'port-warning');
         }
 
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden && clockInterval) {
-                updateGameTime();
-                updateRealTime();
+        // Add CSS animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
             }
-        });
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
   </body>
 </html>
